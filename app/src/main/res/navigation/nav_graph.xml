@@ -14,4 +14,8 @@
         android:id="@+id/linksFragment"
         android:name="com.main.urlshort.links.LinksFragment"
         android:label="LinksFragment" />
+    <fragment
+        android:id="@+id/linkDetailFragment"
+        android:name="com.main.urlshort.linkdetail.LinkDetailFragment"
+        android:label="LinkDetailFragment" />
 </navigation>

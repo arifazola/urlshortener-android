@@ -2,8 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clLink"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true">
 
 
     <TextView
@@ -22,18 +25,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        tools:text="https://youtube.com"
         app:layout_constraintStart_toStartOf="@+id/tvDate"
-        app:layout_constraintTop_toBottomOf="@+id/tvDate" />
+        app:layout_constraintTop_toBottomOf="@+id/tvDate"
+        tools:text="https://youtube.com" />
 
     <TextView
         android:id="@+id/tvShortLink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        tools:text="smrtlink/hfshes"
         app:layout_constraintStart_toStartOf="@+id/tvOrgUrl"
-        app:layout_constraintTop_toBottomOf="@+id/tvOrgUrl" />
+        app:layout_constraintTop_toBottomOf="@+id/tvOrgUrl"
+        tools:text="smrtlink/hfshes" />
 
     <ImageView
         android:id="@+id/ivChart"
@@ -59,8 +62,8 @@
         android:id="@+id/tvUrlHit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="0"
         app:layout_constraintBottom_toBottomOf="@+id/tvShortLink"
-        app:layout_constraintEnd_toStartOf="@+id/ivChart" />
+        app:layout_constraintEnd_toStartOf="@+id/ivChart"
+        tools:text="0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
