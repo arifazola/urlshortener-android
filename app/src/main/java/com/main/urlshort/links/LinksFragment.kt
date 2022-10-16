@@ -1,6 +1,7 @@
 package com.main.urlshort.links
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -48,7 +49,7 @@ class LinksFragment : Fragment(), TabLayout.OnTabSelectedListener {
     private fun setupTablayout(){
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("All"))
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Top 10"))
-        pagerAdapter = LinksPagerAdapter(requireFragmentManager(), binding.tabLayout.tabCount)
+        pagerAdapter = LinksPagerAdapter(childFragmentManager, binding.tabLayout.tabCount)
         binding.tabLayout.addOnTabSelectedListener(this)
     }
 
@@ -60,6 +61,8 @@ class LinksFragment : Fragment(), TabLayout.OnTabSelectedListener {
     override fun onTabSelected(tab: TabLayout.Tab?) {
         tab?.position?.let {
             binding.viewPager.currentItem = it
+            pagerAdapter.notifyDataSetChanged()
+            Log.i("Pager Selected", "Pager Selected")
         }
     }
 

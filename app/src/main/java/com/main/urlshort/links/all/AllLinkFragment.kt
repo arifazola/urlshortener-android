@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.main.urlshort.R
 import com.main.urlshort.SHARED_PREF_KEY
 import com.main.urlshort.databinding.FragmentAllLinkBinding
+import com.main.urlshort.links.LinksFragmentDirections
 import com.main.urlshort.network.Respond
 
 // TODO: Rename parameter arguments, choose names that match
@@ -67,7 +68,15 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         return binding.root
     }
 
-    override fun setOnLinkSelected() {
-        findNavController().navigate(R.id.linkDetailFragment)
+    override fun setOnLinkSelected(
+        urlid: String,
+        date: String,
+        title: String,
+        orgurl: String,
+        urlShort: String,
+        urlhit: String
+    ) {
+//        findNavController().navigate(AllLinkFragmentDirections.actionAllLinkFragmentToLinkDetailFragment2(date, title, orgurl, urlShort, urlhit))
+        findNavController().navigate(LinksFragmentDirections.actionLinksFragmentToLinkDetailFragment(date, title, orgurl, urlShort, urlhit, urlid))
     }
 }

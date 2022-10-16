@@ -9,6 +9,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 private val URL = "http://192.168.1.8:8080/"
@@ -32,6 +33,10 @@ interface NetworkService{
 
     @GET("api/get-all-links")
     suspend fun getAllLinks(@Query("userid") userID: String) : Respond
+
+    @FormUrlEncoded
+    @PUT("/api/links/edit")
+    suspend fun editLink(@Field("url_id") urlid: String, @Field("title") title: String, @Field("back_half") backhalf: String): Respond
 }
 
 object UrlShortService{

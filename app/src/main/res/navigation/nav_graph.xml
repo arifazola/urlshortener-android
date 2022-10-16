@@ -13,9 +13,37 @@
     <fragment
         android:id="@+id/linksFragment"
         android:name="com.main.urlshort.links.LinksFragment"
-        android:label="LinksFragment" />
+        android:label="LinksFragment" >
+        <action
+            android:id="@+id/action_linksFragment_to_linkDetailFragment"
+            app:destination="@id/linkDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/linkDetailFragment"
         android:name="com.main.urlshort.linkdetail.LinkDetailFragment"
-        android:label="LinkDetailFragment" />
+        android:label="LinkDetailFragment" >
+        <argument
+            android:name="date"
+            app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="orgurl"
+            app:argType="string" />
+        <argument android:name="urlshort"
+            app:argType="string" />
+        <argument android:name="urlhit"
+            app:argType="string" />
+        <argument android:name="urlid"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/allLinkFragment"
+        android:name="com.main.urlshort.links.all.AllLinkFragment"
+        android:label="AllLinkFragment" >
+        <action
+            android:id="@+id/action_allLinkFragment_to_linkDetailFragment2"
+            app:destination="@id/linkDetailFragment" />
+    </fragment>
 </navigation>

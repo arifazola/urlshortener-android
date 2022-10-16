@@ -25,11 +25,14 @@ data class DataContent(
      @Json(name = "title") val title: String?,
      @Json(name = "url_hit") val urlHit: String?,
      @Json(name = "created_date") val createdDate: String?,
+     val msg: Any?
 )
 
 data class ErrorMsg(
     @Json(name = "error_msg") val errorMsg: String?,
     val fullname: String?,
     val email: String?,
-    val password: String?
+    val password: String?,
+    val title: String?,
+    @Json(name = "back_half") val backHalf: String?
 )

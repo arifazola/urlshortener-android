@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.main.urlshort.R
 import com.main.urlshort.network.DataContent
 import com.main.urlshort.network.Respond
+import java.text.SimpleDateFormat
 
 class AllLinksAdapter: RecyclerView.Adapter<AllLinksAdapter.ViewHolder>() {
 
@@ -28,7 +29,7 @@ class AllLinksAdapter: RecyclerView.Adapter<AllLinksAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = data[position]
 //        holder.date.text = item.data!!.get(position).createdDate
-        holder.date.text = item.createdDate
+        holder.date.text = SimpleDateFormat("MMMM dd, yyyy HH:mm").format(item.createdDate!!.toLong() * 1000L)
 //        holder.orgUrl.text = item.data!!.get(position).orgUrl
         holder.orgUrl.text = item.orgUrl
 //        holder.shortLink.text = "smrt.link./" + item.data!!.get(position).urlShort
@@ -37,7 +38,7 @@ class AllLinksAdapter: RecyclerView.Adapter<AllLinksAdapter.ViewHolder>() {
         holder.urlHit.text = item.urlHit
 
         holder.clLink.setOnClickListener {
-            onLinkSelected?.setOnLinkSelected()
+            onLinkSelected?.setOnLinkSelected(item.urlID!!, item.createdDate!!, item.title!!, item.orgUrl!!, item.urlShort!!, item.urlHit!!)
         }
     }
 
@@ -55,5 +56,5 @@ class AllLinksAdapter: RecyclerView.Adapter<AllLinksAdapter.ViewHolder>() {
 }
 
 interface OnLinkSelected{
-    fun setOnLinkSelected()
+    fun setOnLinkSelected(urlid: String, date: String, title: String, orgurl: String, urlShort: String, urlhit: String)
 }
