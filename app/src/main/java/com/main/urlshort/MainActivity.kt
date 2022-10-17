@@ -5,15 +5,19 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Button
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.navigation.NavigationView
 import com.main.urlshort.databinding.ActivityMainBinding
 
@@ -37,6 +41,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         binding.navView.setNavigationItemSelectedListener(this)
 
+        binding.fabAddLink.setOnClickListener {
+            openBottomSheet()
+        }
+
+    }
+
+    private fun openBottomSheet(){
+        val bottomSheet = BottomSheetExtension(this)
+        val bottomSheetView = bottomSheet.showBottomSheetDialog(this, R.layout.add_link, null, null, true, true, layoutInflater)
+        val close = bottomSheetView.findViewById<Button>(R.id.btnCloseAdd)
+
+        close.setOnClickListener {
+            bottomSheet.dialog.dismiss()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -1,5 +1,12 @@
 package com.main.urlshort.linkdetail
 
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
@@ -11,17 +18,21 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.main.urlshort.R
 import com.main.urlshort.Utils
 import com.main.urlshort.databinding.FragmentLinkDetailBinding
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
 // TODO: Rename parameter arguments, choose names that match
@@ -59,8 +70,6 @@ class LinkDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentLinkDetailBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(LinkDetailViewModel::class.java)
-        val chart = binding.chart
-        val entries: MutableList<BarEntry> = mutableListOf()
         val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fabAddLink)
         val args = LinkDetailFragmentArgs.fromBundle(requireArguments())
         customActionBar = (requireActivity() as AppCompatActivity).supportActionBar?.customView!!
@@ -72,31 +81,6 @@ class LinkDetailFragment : Fragment() {
         fab.visibility = View.GONE
         binding.etTitleEdit.setText(args.title)
         binding.etBackHalf.setText(args.urlshort)
-        entries.add(BarEntry(0f, 10f))
-        entries.add(BarEntry(1f, 20f))
-        entries.add(BarEntry(2f, 30f))
-        entries.add(BarEntry(3f, 40f))
-        entries.add(BarEntry(6f, 50f))
-        val barDataSet = BarDataSet(entries, "Perkembangan")
-        val data = BarData(barDataSet)
-        val xAxis = chart.xAxis
-        val rightAxis = chart.axisRight
-        var date = ArrayList<String>();
-        date.add("01-Apr")
-        date.add("02-Apr")
-        date.add("03-Apr")
-        date.add("04-Apr")
-        date.add("05-Apr")
-        date.add("06-Apr")
-        date.add("07-Apr")
-        val dateFormatter = AxisDateformatter(date)
-        chart.xAxis.valueFormatter = dateFormatter
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        rightAxis.isEnabled = false
-        data.barWidth = 0.9f
-        chart.data = data
-        chart.setFitBars(true)
-        chart.invalidate()
 
         edit?.setOnClickListener {
             editLink()
@@ -104,6 +88,15 @@ class LinkDetailFragment : Fragment() {
 
         save.setOnClickListener {
             saveLink(args.urlid)
+        }
+
+        if(args.urlhit.toInt() != 0){
+            setChart(args.urlshort)
+        }
+
+        binding.materialButton2.setOnClickListener {
+            val dialog = DialogShare(args.urlshort)
+            dialog.show(requireFragmentManager(), "Share Dialog")
         }
         return binding.root
     }
@@ -152,6 +145,40 @@ class LinkDetailFragment : Fragment() {
             Log.e("Data Link Edit", it.toString())
         }
     }
+
+    private fun setChart(urlshort: String){
+        val chart = binding.chart
+        val entries: MutableList<BarEntry> = mutableListOf()
+        var date = ArrayList<String>();
+
+        viewModel.getStats(urlshort)
+
+        viewModel.stats.observe(viewLifecycleOwner){
+            it?.let {
+                for(i in 0..it.size - 1){
+                    entries.add(BarEntry(i.toFloat(), it.get(i).total!!.toFloat()))
+                    date.add(Utils.formatDate(it.get(i).date!!, "yyyy-MM-dd", "MMM dd"))
+                }
+            }
+
+            val barDataSet = BarDataSet(entries, "Link Visit")
+            barDataSet.valueFormatter = DefaultValueFormatter(0)
+            val data = BarData(barDataSet)
+            val xAxis = chart.xAxis
+            val rightAxis = chart.axisRight
+            val description = chart.description
+
+            val dateFormatter = AxisDateformatter(date)
+            chart.xAxis.valueFormatter = dateFormatter
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            rightAxis.isEnabled = false
+            description.isEnabled = false
+            data.barWidth = 0.9f
+            chart.data = data
+            chart.setFitBars(true)
+            chart.invalidate()
+        }
+    }
 }
 
 class AxisDateformatter(val values: ArrayList<String>): ValueFormatter(){
@@ -163,5 +190,26 @@ class AxisDateformatter(val values: ArrayList<String>): ValueFormatter(){
         } else {
             ""
         }
+    }
+}
+
+class DialogShare(val shortUrl: String): DialogFragment(){
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setItems(R.array.share, DialogInterface.OnClickListener { dialogInterface, i ->
+
+            if(i == 1){
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.setType("text/plain")
+                intent.putExtra(Intent.EXTRA_TEXT, "smrt.link/$shortUrl")
+                startActivity(Intent.createChooser(intent, "Share With"))
+            } else {
+                val clipboard: ClipboardManager = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("copy short", "smrt.link/$shortUrl")
+                clipboard.setPrimaryClip(clip)
+                Utils.showToast(requireContext(), "Smrtlink copied to clipboard")
+            }
+        })
+        return builder.create()
     }
 }

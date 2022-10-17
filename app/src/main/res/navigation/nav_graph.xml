@@ -44,6 +44,10 @@
         android:label="AllLinkFragment" >
         <action
             android:id="@+id/action_allLinkFragment_to_linkDetailFragment2"
-            app:destination="@id/linkDetailFragment" />
+            app:destination="@id/linkDetailFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 </navigation>
