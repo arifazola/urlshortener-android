@@ -102,6 +102,10 @@ dependencies {
     //MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
+    //ColorPicker
+    implementation 'com.github.duanhong169:colorpicker:1.1.6'
+    implementation 'com.github.duanhong169:checkerboarddrawable:1.0.2'
+
     //Multidex
 //    implementation 'com.android.support:multidex:1.0.3'
 

@@ -34,7 +34,9 @@ data class ErrorMsg(
     val email: String?,
     val password: String?,
     val title: String?,
-    @Json(name = "back_half") val backHalf: String?
+    @Json(name = "back_half") val backHalf: String?,
+    @Json(name = "org_url") val orgUrl: String?,
+    @Json(name = "input_custom") val inputCustom: String?,
 )
 
 data class StatsData(

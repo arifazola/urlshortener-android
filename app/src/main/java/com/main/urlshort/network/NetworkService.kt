@@ -40,6 +40,10 @@ interface NetworkService{
 
     @GET("api/links/getstats")
     suspend fun getStats(@Query("url_short") urlshort: String): List<StatsData>
+
+    @FormUrlEncoded
+    @POST("api/links/short")
+    suspend fun shortURL(@Field("org_url") orgURL: String, @Field("input_custom") inputCustom: String, @Field("created_by") createdBy: String): Respond
 }
 
 object UrlShortService{

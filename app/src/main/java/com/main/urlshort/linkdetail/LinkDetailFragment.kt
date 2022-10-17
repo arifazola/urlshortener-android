@@ -70,7 +70,7 @@ class LinkDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentLinkDetailBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(LinkDetailViewModel::class.java)
-        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fabAddLink)
+//        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fabAddLink)
         val args = LinkDetailFragmentArgs.fromBundle(requireArguments())
         customActionBar = (requireActivity() as AppCompatActivity).supportActionBar?.customView!!
         edit = customActionBar.findViewById(R.id.imgEdit)
@@ -78,7 +78,7 @@ class LinkDetailFragment : Fragment() {
         binding.tvDate.text = SimpleDateFormat("MMMM dd, yyyy HH:mm").format(args.date.toLong() * 1000L)
         binding.tvOrgUrl.text = args.orgurl
         binding.textView6.text = args.urlshort
-        fab.visibility = View.GONE
+//        fab.visibility = View.GONE
         binding.etTitleEdit.setText(args.title)
         binding.etBackHalf.setText(args.urlshort)
 
