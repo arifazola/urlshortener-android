@@ -18,4 +18,8 @@
         <item>Copy</item>
         <item>Share</item>
     </string-array>
+    
+    <item name="cv_link_form" type="id"></item>
+    <item name="cl_inner" type="id"></item>
+    <item name="et_link" type="id"></item>
 </resources>

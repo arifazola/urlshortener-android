@@ -39,6 +39,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:tint="@color/white" />
 
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/fabSeePreview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="See Preview"
+                android:text="See Preview"
+                android:textColor="@color/white"
+                app:icon="@drawable/ic_baseline_remove_red_eye_24"
+                app:iconTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/white" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Container for contents of drawer - use NavigationView to make configuration easier -->

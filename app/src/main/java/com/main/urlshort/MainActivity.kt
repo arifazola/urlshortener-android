@@ -27,7 +27,8 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputLayout
 import com.main.urlshort.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, NavController.OnDestinationChangedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+    NavController.OnDestinationChangedListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var drawer: DrawerLayout
     private lateinit var appBarConfig: AppBarConfiguration
@@ -38,7 +39,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         sharedPreferences = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
-        appBarConfig = AppBarConfiguration(setOf(R.id.dashboardFragment, R.id.linksFragment), binding.drawerLayout)
+        appBarConfig = AppBarConfiguration(
+            setOf(R.id.dashboardFragment, R.id.linksFragment),
+            binding.drawerLayout
+        )
         val colorDrawable = ColorDrawable(Color.parseColor("#FFFFFF"))
         supportActionBar?.setBackgroundDrawable(colorDrawable)
         drawer = binding.drawerLayout
@@ -56,9 +60,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-    private fun openBottomSheet(){
+    private fun openBottomSheet() {
         val bottomSheet = BottomSheetExtension(this)
-        val bottomSheetView = bottomSheet.showBottomSheetDialog(this, R.layout.add_link, null, null, true, true, layoutInflater)
+        val bottomSheetView = bottomSheet.showBottomSheetDialog(
+            this,
+            R.layout.add_link,
+            null,
+            null,
+            true,
+            true,
+            layoutInflater
+        )
         val close = bottomSheetView.findViewById<Button>(R.id.btnCloseAdd)
         val shorten = bottomSheetView.findViewById<Button>(R.id.btnShorten)
 
@@ -71,34 +83,38 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val orgUrl = bottomSheetView.findViewById<TextInputLayout>(R.id.tilDestinationUrl)
             val inputCustom = bottomSheetView.findViewById<TextInputLayout>(R.id.tilbackhalf)
             val createdBy = sharedPreferences.getString("userid", null)
-            viewModel.shortUrl(orgUrl.editText?.text.toString(), inputCustom.editText?.text.toString(), createdBy!!)
+            viewModel.shortUrl(
+                orgUrl.editText?.text.toString(),
+                inputCustom.editText?.text.toString(),
+                createdBy!!
+            )
 
-            viewModel.respond.observe(this){
+            viewModel.respond.observe(this) {
                 Log.i("Short URL Data", it.toString())
-                if(it?.error?.get(0)?.orgUrl != null){
+                if (it?.error?.get(0)?.orgUrl != null) {
                     orgUrl.isErrorEnabled = true
                     orgUrl.error = it.error?.get(0)?.orgUrl
                 } else {
                     orgUrl.isErrorEnabled = false
                 }
 
-                if(it?.error?.get(0)?.inputCustom != null){
+                if (it?.error?.get(0)?.inputCustom != null) {
                     inputCustom.isErrorEnabled = true
                     inputCustom.error = it.error?.get(0)?.inputCustom
                 } else {
                     inputCustom.isErrorEnabled = true
                 }
 
-                if (it?.data?.get(0)?.msg == "Duplicate"){
+                if (it?.data?.get(0)?.msg == "Duplicate") {
                     inputCustom.isErrorEnabled = true
                     inputCustom.error = "Back-half is already taken. Try another one"
                 }
 
-                if(it?.data?.get(0)?.msg == true){
+                if (it?.data?.get(0)?.msg == true) {
                     recreate()
                 }
 
-                if(it?.data?.get(0)?.msg == false){
+                if (it?.data?.get(0)?.msg == false) {
                     Utils.showToast(this, "Server Error. Please try again")
                 }
             }
@@ -112,7 +128,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         Log.i("Nav Selected", "Selected")
-        when(item.itemId){
+        when (item.itemId) {
             R.id.nav_home -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.dashboardFragment)
                 return true
@@ -134,14 +150,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         destination: NavDestination,
         arguments: Bundle?
     ) {
-        if(destination.id == R.id.linkDetailFragment){
+        if (destination.id == R.id.linkDetailFragment) {
             supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM or ActionBar.DISPLAY_SHOW_HOME or ActionBar.DISPLAY_HOME_AS_UP or ActionBar.DISPLAY_SHOW_TITLE)
             supportActionBar?.setDisplayShowCustomEnabled(true)
             supportActionBar?.setCustomView(R.layout.custom_bar)
             binding.fabAddLink.visibility = View.GONE
+            binding.fabSeePreview.visibility = View.GONE
+        } else if (destination.id == R.id.libEditFragment) {
+            binding.fabAddLink.visibility = View.GONE
+            binding.fabSeePreview.visibility = View.VISIBLE
         } else {
             supportActionBar?.setDisplayShowCustomEnabled(false)
             binding.fabAddLink.visibility = View.VISIBLE
+            binding.fabSeePreview.visibility = View.GONE
         }
     }
 }
