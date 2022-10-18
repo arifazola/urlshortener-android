@@ -22,4 +22,6 @@
     <item name="cv_link_form" type="id"></item>
     <item name="cl_inner" type="id"></item>
     <item name="et_link" type="id"></item>
+    <item name="et_title" type="id"></item>
+    <item name="btn_remove_link" type="id"></item>
 </resources>
