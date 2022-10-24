@@ -26,6 +26,17 @@ data class DataContent(
      @Json(name = "url_hit") val urlHit: String?,
      @Json(name = "created_date") val createdDate: String?,
      val msg: Any?,
+     @Json(name = "lib_id") val libId: String?,
+     @Json(name = "lib_property") val libProperty: String?,
+     @Json(name = "background_type") val backgroundType: String?,
+     @Json(name = "first_color") val firstColor: String?,
+     @Json(name = "secondary_color") val secondaryColor: String?,
+     @Json(name = "picture") val picture: String?,
+     @Json(name = "page_title") val pageTitle: String?,
+     @Json(name = "bio") val bio: String?,
+     @Json(name = "button_color") val buttoncolor: String?,
+     @Json(name = "text_color") val textColor: String?,
+     @Json(name = "links") val links: List<Links>?,
 )
 
 data class ErrorMsg(
@@ -42,4 +53,10 @@ data class ErrorMsg(
 data class StatsData(
     val total: String?,
     val date: String?
+)
+
+data class Links(
+    @Json(name = "lib_property") val libProperty: String?,
+    val link: String?,
+    val text: String?
 )

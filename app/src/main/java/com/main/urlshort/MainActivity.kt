@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         sharedPreferences = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         appBarConfig = AppBarConfiguration(
-            setOf(R.id.dashboardFragment, R.id.linksFragment),
+            setOf(R.id.dashboardFragment, R.id.linksFragment, R.id.libListFragment),
             binding.drawerLayout
         )
         val colorDrawable = ColorDrawable(Color.parseColor("#FFFFFF"))
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 return true
             }
             R.id.nav_lib -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.libEditFragment)
+                findNavController(R.id.nav_host_fragment).navigate(R.id.libListFragment)
                 return true
             }
             else -> return false
@@ -157,6 +157,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             binding.fabAddLink.visibility = View.GONE
             binding.fabSeePreview.visibility = View.GONE
         } else if (destination.id == R.id.libEditFragment) {
+            supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM or ActionBar.DISPLAY_SHOW_HOME or ActionBar.DISPLAY_HOME_AS_UP or ActionBar.DISPLAY_SHOW_TITLE)
+            supportActionBar?.setDisplayShowCustomEnabled(true)
+            supportActionBar?.setCustomView(R.layout.custom_bar_lib)
             binding.fabAddLink.visibility = View.GONE
             binding.fabSeePreview.visibility = View.VISIBLE
         } else {

@@ -1,8 +1,11 @@
 package com.main.urlshort.linkinbio.edit
 
 import android.app.ActionBar.LayoutParams
+import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +16,14 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.graphics.toColorInt
 import androidx.core.view.marginStart
+import androidx.lifecycle.ViewModelProvider
 import com.main.urlshort.R
+import com.main.urlshort.SHARED_PREF_KEY
 import com.main.urlshort.Utils
 import com.main.urlshort.databinding.FragmentLibEditBinding
+import com.main.urlshort.linkinbio.LibViewModel
 import top.defaults.colorpicker.ColorObserver
 import top.defaults.colorpicker.ColorPickerPopup
 
@@ -35,6 +42,8 @@ class LibEditFragment : Fragment(), ColorObserver{
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var binding: FragmentLibEditBinding
+    private lateinit var viewModel: LibViewModel
+    private lateinit var sharedPreferences: SharedPreferences
     private var initialConstraint = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +60,23 @@ class LibEditFragment : Fragment(), ColorObserver{
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentLibEditBinding.inflate(inflater)
+        viewModel = ViewModelProvider(this).get(LibViewModel::class.java)
+        sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
+        val userid = sharedPreferences.getString("userid", null)
+        val args = LibEditFragmentArgs.fromBundle(requireArguments())
+        Utils.showToast(requireContext(), "${args.property} $userid")
         initialConstraint = binding.buttonAddLink.id
 
         binding.colorPicker.subscribe { color, fromUser, shouldPropagate ->
             binding.vPreviewColor.setBackgroundColor(color)
+        }
+
+        binding.colorPickerButton.subscribe { color, fromUser, shouldPropagate ->
+            binding.vPreviewButtonColor.setBackgroundColor(color)
+        }
+
+        binding.colorPickerText.subscribe { color, fromUser, shouldPropagate ->
+            binding.vPreviewTextColor.setBackgroundColor(color)
         }
 
         binding.flatcolor.setOnClickListener {
@@ -67,8 +89,114 @@ class LibEditFragment : Fragment(), ColorObserver{
             binding.gradientcolor.setBackgroundResource(R.drawable.gradient_border)
         }
 
+        binding.btnChangeColor.setOnClickListener {
+            binding.colorPicker.visibility = View.VISIBLE
+            it.visibility = View.GONE
+            binding.btnSaveBackground.visibility = View.VISIBLE
+            val constraint = binding.clbackgrouncolor
+            val constrainSet = ConstraintSet()
+            constrainSet.clone(constraint)
+            constrainSet.connect(binding.flatcolor.id, ConstraintSet.TOP, binding.btnSaveBackground.id, ConstraintSet.BOTTOM, 16)
+            constrainSet.connect(binding.gradientcolor.id, ConstraintSet.TOP, binding.btnSaveBackground.id, ConstraintSet.BOTTOM, 16)
+            constrainSet.applyTo(constraint)
+        }
+
+        binding.btnSaveBackground.setOnClickListener {
+            binding.colorPicker.visibility = View.GONE
+            it.visibility = View.GONE
+            binding.btnChangeColor.visibility = View.VISIBLE
+            val constraint = binding.clbackgrouncolor
+            val constrainSet = ConstraintSet()
+            constrainSet.clone(constraint)
+            constrainSet.connect(binding.flatcolor.id, ConstraintSet.TOP, binding.btnChangeColor.id, ConstraintSet.BOTTOM, 16)
+            constrainSet.connect(binding.gradientcolor.id, ConstraintSet.TOP, binding.btnChangeColor.id, ConstraintSet.BOTTOM, 16)
+            constrainSet.applyTo(constraint)
+        }
+
+        binding.btnChangeButtonColor.setOnClickListener {
+            binding.colorPickerButton.visibility = View.VISIBLE
+            it.visibility = View.GONE
+            binding.btnSetButtonColor.visibility = View.VISIBLE
+            val constraint = binding.clButtonSet
+            val constrainSet = ConstraintSet()
+            constrainSet.clone(constraint)
+            constrainSet.connect(binding.tvCurrentTextColor.id, ConstraintSet.TOP, binding.btnSetButtonColor.id, ConstraintSet.BOTTOM, 16)
+            constrainSet.applyTo(constraint)
+        }
+
+        binding.btnSetButtonColor.setOnClickListener {
+            binding.colorPickerButton.visibility = View.GONE
+            it.visibility = View.GONE
+            binding.btnChangeButtonColor.visibility = View.VISIBLE
+            val constraint = binding.clButtonSet
+            val constrainSet = ConstraintSet()
+            constrainSet.clone(constraint)
+            constrainSet.connect(binding.tvCurrentTextColor.id, ConstraintSet.TOP, binding.btnChangeButtonColor.id, ConstraintSet.BOTTOM, 16)
+            constrainSet.applyTo(constraint)
+        }
+
+        binding.btnChangeTextColor.setOnClickListener {
+            binding.colorPickerText.visibility = View.VISIBLE
+            it.visibility = View.GONE
+            binding.btnSetTextColor.visibility = View.VISIBLE
+        }
+
+        binding.btnSetTextColor.setOnClickListener {
+            binding.colorPickerText.visibility = View.GONE
+            it.visibility = View.GONE
+            binding.btnChangeTextColor.visibility = View.VISIBLE
+        }
+
         binding.buttonAddLink.setOnClickListener {
             createLinkForm()
+        }
+
+        viewModel.getLibSettings(args.property, userid.toString())
+
+        viewModel.setting.observe(viewLifecycleOwner){
+            Log.i("LibSettings Data", it.toString())
+
+            it.data?.get(0)?.firstColor.let {
+                binding.colorPicker.setInitialColor(it!!.toColorInt())
+            }
+
+            it.data?.get(0)?.buttoncolor.let {
+                binding.colorPickerButton.setInitialColor(it!!.toColorInt())
+            }
+
+            it.data?.get(0)?.textColor.let {
+                binding.colorPickerText.setInitialColor(it!!.toColorInt())
+            }
+
+            it.data?.get(0)?.links?.forEach {
+                Log.i("Links List", "${it.link} ${it.libProperty} ${it.text}")
+                createLinkForm(it.link, it.text)
+            }
+
+            it.data?.get(0)?.picture.let {
+                binding.tilImageUrl.editText?.setText(it)
+            }
+
+            it.data?.get(0)?.pageTitle.let {
+                binding.tilPageTitle.editText?.setText(it)
+            }
+
+            it.data?.get(0)?.bio.let {
+                binding.tilBio.editText?.setText(it)
+            }
+
+            it.data?.get(0)?.backgroundType.let {
+                if(it == "gradient-color-text"){
+                    binding.flatcolor.setBackgroundResource(R.drawable.flat_noborder)
+                    binding.gradientcolor.setBackgroundResource(R.drawable.gradient_border)
+                } else if(it == "flat-color-text") {
+                    binding.flatcolor.setBackgroundResource(R.drawable.flat_border)
+                    binding.gradientcolor.setBackgroundResource(R.drawable.gradient_noborder)
+                } else {
+                    binding.flatcolor.setBackgroundResource(R.drawable.flat_noborder)
+                    binding.gradientcolor.setBackgroundResource(R.drawable.gradient_noborder)
+                }
+            }
         }
 
         return binding.root
@@ -78,7 +206,7 @@ class LibEditFragment : Fragment(), ColorObserver{
         binding.vPreviewColor.setBackgroundColor(color)
     }
 
-    fun createLinkForm(){
+    fun createLinkForm(url: String? = null, title: String? = null){
         val constrainLayout = binding.clAddLink
         val constraintSet = ConstraintSet()
         val cardView = CardView(requireContext())
@@ -106,12 +234,14 @@ class LibEditFragment : Fragment(), ColorObserver{
         val editText = EditText(requireContext())
         editText.id = View.generateViewId()
         editText.hint = "URL"
+        editText.setText(url)
         val editTextLayoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         editText.layoutParams = editTextLayoutParams
 
         val urlTitle = EditText(requireContext())
         urlTitle.id = View.generateViewId()
         urlTitle.hint = "URL Title"
+        urlTitle.setText(title)
         val titleLayoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         urlTitle.layoutParams = titleLayoutParams
         val removeLink = Button(requireContext())
@@ -138,9 +268,26 @@ class LibEditFragment : Fragment(), ColorObserver{
         constraintSetInner.applyTo(constraintInner)
 
         removeLink.setOnClickListener{
-            Utils.showToast(requireContext(), cardView.id.toString())
+//            Utils.showToast(requireContext(), cardView.id.toString())
+            val selectedCard = cardView.id
+            val card = view?.findViewById<CardView>(selectedCard)
+            card?.visibility = View.GONE
         }
 
         initialConstraint = cardView.id
     }
+
+
+    /**
+     * Potongan kode untuk tambah entry ke map dan hapus berdasarkan key
+     * dipake buat ngapus list link
+     * keynya bisa id button delete atau id cardview
+     * valunya link sama text
+     *
+     *  val list = listOf(1,2,3)
+        val list2 = listOf(4,5,6)
+        val map = mutableMapOf(1 to list, 2 to list2)
+
+        print(map.remove(2))
+     */
 }

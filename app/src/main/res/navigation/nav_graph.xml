@@ -53,5 +53,17 @@
     <fragment
         android:id="@+id/libEditFragment"
         android:name="com.main.urlshort.linkinbio.edit.LibEditFragment"
-        android:label="LibEditFragment" />
+        android:label="LibEditFragment" >
+        <argument
+            android:name="property"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/libListFragment"
+        android:name="com.main.urlshort.linkinbio.list.LibListFragment"
+        android:label="LibListFragment" >
+        <action
+            android:id="@+id/action_libListFragment_to_libEditFragment"
+            app:destination="@id/libEditFragment" />
+    </fragment>
 </navigation>
