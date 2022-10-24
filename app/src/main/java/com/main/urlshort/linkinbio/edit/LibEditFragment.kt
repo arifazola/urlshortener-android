@@ -19,6 +19,8 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.toColorInt
 import androidx.core.view.marginStart
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.main.urlshort.R
 import com.main.urlshort.SHARED_PREF_KEY
 import com.main.urlshort.Utils
@@ -44,6 +46,7 @@ class LibEditFragment : Fragment(), ColorObserver{
     private lateinit var binding: FragmentLibEditBinding
     private lateinit var viewModel: LibViewModel
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var listLink: MutableMap<Int, ArrayList<String>>
     private var initialConstraint = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +67,7 @@ class LibEditFragment : Fragment(), ColorObserver{
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val userid = sharedPreferences.getString("userid", null)
         val args = LibEditFragmentArgs.fromBundle(requireArguments())
+        listLink = mutableMapOf()
         Utils.showToast(requireContext(), "${args.property} $userid")
         initialConstraint = binding.buttonAddLink.id
 
@@ -171,6 +175,9 @@ class LibEditFragment : Fragment(), ColorObserver{
             it.data?.get(0)?.links?.forEach {
                 Log.i("Links List", "${it.link} ${it.libProperty} ${it.text}")
                 createLinkForm(it.link, it.text)
+                val links = arrayListOf(it.link.toString(), it.text.toString())
+                listLink.put(initialConstraint, links)
+//                Log.i("Map Links", listLink.toString())
             }
 
             it.data?.get(0)?.picture.let {
@@ -199,6 +206,13 @@ class LibEditFragment : Fragment(), ColorObserver{
             }
         }
 
+//        Log.i("Map Links", listLink.toString())
+
+        val seePreview = requireActivity().findViewById<ExtendedFloatingActionButton>(R.id.fabSeePreview)
+
+        seePreview.setOnClickListener {
+            Log.i("Map Links", listLink.toString())
+        }
         return binding.root
     }
 
@@ -269,9 +283,11 @@ class LibEditFragment : Fragment(), ColorObserver{
 
         removeLink.setOnClickListener{
 //            Utils.showToast(requireContext(), cardView.id.toString())
+            listLink.remove(cardView.id)
             val selectedCard = cardView.id
             val card = view?.findViewById<CardView>(selectedCard)
             card?.visibility = View.GONE
+            Log.i("Map Links", listLink.toString())
         }
 
         initialConstraint = cardView.id
