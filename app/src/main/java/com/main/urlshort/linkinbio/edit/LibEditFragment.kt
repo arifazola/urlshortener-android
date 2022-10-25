@@ -1,6 +1,7 @@
 package com.main.urlshort.linkinbio.edit
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
@@ -10,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -17,7 +20,9 @@ import androidx.core.graphics.toColorInt
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.main.urlshort.PreviewLibActivity
 import com.main.urlshort.R
 import com.main.urlshort.SHARED_PREF_KEY
 import com.main.urlshort.Utils
@@ -77,7 +82,6 @@ class LibEditFragment : Fragment(), ColorObserver{
         val args = LibEditFragmentArgs.fromBundle(requireArguments())
         listLink = mutableMapOf()
         property = args.property
-        Utils.showToast(requireContext(), "${args.property} $userid")
         initialConstraint = binding.buttonAddLink.id
 
         binding.colorPicker.subscribe { color, fromUser, shouldPropagate ->
@@ -243,21 +247,33 @@ class LibEditFragment : Fragment(), ColorObserver{
         val seePreview = requireActivity().findViewById<ExtendedFloatingActionButton>(R.id.fabSeePreview)
 
         seePreview.setOnClickListener {
+            val intent = Intent(requireContext(), PreviewLibActivity::class.java)
+            startActivity(intent)
+//            findNavController().navigate(LibEditFragmentDirections.actionLibEditFragmentToPreviewLibFragmnet())
+//            links = mutableListOf()
+//            linkText = mutableListOf()
+//            for(i in 0 .. listLink.size - 1){
+//                links.add(i, listLink.values.elementAt(i).get(0))
+//                linkText.add(i, listLink.values.elementAt(i).get(1))
+//            }
+//            Log.i("Map Links", links.toString())
+//            Log.i("Map Links", linkText.toString())
+//            Log.i("Map Links", listLink.toString())
+//            Log.i("Map Links", listLink.toString())
+//            Log.i("Map Links Size", listLink.get(1)?.size.toString())
+//            Log.i("Map Links Size", listLink.get(20)?.size.toString())
+//            viewModel.editlib(userid!!, links, linkText, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor)
+        }
+
+        val customSave = (requireActivity() as AppCompatActivity).supportActionBar?.customView
+        val save = customSave?.findViewById<ImageView>(R.id.imgSave)
+        save?.setOnClickListener {
             links = mutableListOf()
             linkText = mutableListOf()
             for(i in 0 .. listLink.size - 1){
                 links.add(i, listLink.values.elementAt(i).get(0))
                 linkText.add(i, listLink.values.elementAt(i).get(1))
             }
-            Log.i("Map Links", links.toString())
-            Log.i("Map Links", linkText.toString())
-            Log.i("Map Links", listLink.toString())
-//            listLink.replace(1, listLink.values.elementAt(0), listLink.values.)
-//            listLink.values.elementAt(0).set(1, "http:pesbuk")
-//            listLink.get(6)!!.set(0, "http://wassap")
-            Log.i("Map Links", listLink.toString())
-            Log.i("Map Links Size", listLink.get(1)?.size.toString())
-            Log.i("Map Links Size", listLink.get(20)?.size.toString())
             viewModel.editlib(userid!!, links, linkText, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor)
         }
         return binding.root
@@ -277,7 +293,6 @@ class LibEditFragment : Fragment(), ColorObserver{
         layoutParams.setMargins(16, 16, 16,0)
         cardView.layoutParams = layoutParams
         constrainLayout.addView(cardView)
-        Utils.showToast(requireContext(), initialConstraint.toString())
         constraintSet.clone(constrainLayout)
         constraintSet.connect(cardView.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
         constraintSet.connect(cardView.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
@@ -306,7 +321,6 @@ class LibEditFragment : Fragment(), ColorObserver{
                 } else {
                     listLink.get(cardView.id)?.set(0, text.text.toString())
                 }
-                Utils.showToast(requireContext(), "Lost Focus")
             }
         }
 
@@ -318,7 +332,6 @@ class LibEditFragment : Fragment(), ColorObserver{
             } else {
                 listLink.get(cardView.id)?.set(0, text?.text.toString())
             }
-            Utils.showToast(requireContext(), "Typing")
         }
 
         val editTextLayoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -337,7 +350,6 @@ class LibEditFragment : Fragment(), ColorObserver{
                 } else {
                     listLink.get(cardView.id)?.set(1, text.text.toString())
                 }
-                Utils.showToast(requireContext(), "Lost Focus")
             }
         }
 
@@ -349,7 +361,6 @@ class LibEditFragment : Fragment(), ColorObserver{
             } else {
                 listLink.get(cardView.id)?.set(1, text?.text.toString())
             }
-            Utils.showToast(requireContext(), "Typing")
         }
         val titleLayoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         urlTitle.layoutParams = titleLayoutParams
@@ -377,7 +388,6 @@ class LibEditFragment : Fragment(), ColorObserver{
         constraintSetInner.applyTo(constraintInner)
 
         removeLink.setOnClickListener{
-//            Utils.showToast(requireContext(), cardView.id.toString())
             listLink.remove(cardView.id)
             val selectedCard = cardView.id
             val card = view?.findViewById<CardView>(selectedCard)
