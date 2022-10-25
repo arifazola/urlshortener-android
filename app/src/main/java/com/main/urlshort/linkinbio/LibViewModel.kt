@@ -40,4 +40,15 @@ class LibViewModel: ViewModel() {
             }
         }
     }
+
+    fun editlib(userid: String, links: MutableList<String>, titles: MutableList<String>, property: String, backgroundType: String, firstColor: String, secondaryColor: String,
+                picture: String, pageTitle: String, bio: String, buttonColor: String, textColor: String){
+        viewModelScope.launch {
+            try {
+                val editLib = UrlShortService.networkService.editLib(userid, links, titles, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor)
+            }catch (e: Exception){
+                Log.e("Edit Lib Exception", e.message.toString())
+            }
+        }
+    }
 }

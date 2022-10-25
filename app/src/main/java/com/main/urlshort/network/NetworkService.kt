@@ -50,6 +50,12 @@ interface NetworkService{
 
     @GET("api/linkinbio/setting")
     suspend fun getLibSettings(@Query("property") property: String, @Query("user_id") userid: String): Respond
+
+    @GET("api/linkinbio/edit")
+    suspend fun editLib(@Query("user_id") userid: String, @Query("links[]") links: List<String>, @Query("titles[]") titles: List<String>, @Query("property") property: String,
+                        @Query("background_type") backgroundType: String, @Query("first_color") firstColor: String, @Query("secondary_color") secondaryColor: String,
+                        @Query("picture") picture: String, @Query("page_title") pageTitle: String, @Query("bio") bio: String, @Query("button_color") buttonColor: String,
+                        @Query("text_color") textColor: String)
 }
 
 object UrlShortService{

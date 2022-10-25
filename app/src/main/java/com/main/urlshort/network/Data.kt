@@ -48,6 +48,16 @@ data class ErrorMsg(
     @Json(name = "back_half") val backHalf: String?,
     @Json(name = "org_url") val orgUrl: String?,
     @Json(name = "input_custom") val inputCustom: String?,
+    val links: String?,
+    val titles: String?,
+    val property: String?,
+    @Json(name = "background_type") val backgroundType: String?,
+    @Json(name = "first_color") val firstColor: String?,
+    @Json(name = "secondary_color") val secondaryColor: String?,
+    @Json(name = "page_title") val pageTitle: String?,
+    val bio: String?,
+    @Json(name = "button_color") val buttoncolor: String?,
+    @Json(name = "text_color") val text: String?,
 )
 
 data class StatsData(
