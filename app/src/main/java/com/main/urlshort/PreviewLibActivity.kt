@@ -9,8 +9,10 @@ class PreviewLibActivity : AppCompatActivity() {
         setTheme(R.style.Theme_UrlShort_NoActionBar)
         super.onCreate(savedInstanceState)
         val webView = WebView(this)
+        val intent = intent
+        val property = intent.getStringExtra("PROPERTY")
         setContentView(webView)
-        webView.loadUrl("http://192.168.1.8:8080/landingpage3")
+        webView.loadUrl("http://192.168.1.7:8080/${property}")
         webView.settings.javaScriptEnabled = true
     }
 }

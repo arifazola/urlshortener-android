@@ -118,6 +118,10 @@ class LibEditFragment : Fragment(), ColorObserver{
             binding.flatcolor.setBackgroundResource(R.drawable.flat_noborder)
             binding.gradientcolor.setBackgroundResource(R.drawable.gradient_border)
             backgroundType = "gradient-color-text"
+            val random: java.util.Random = java.util.Random()
+            val randomNum = random.nextInt(0xffffff + 1)
+            val colorCode = String.format("#%06x", randomNum)
+            secondaryColor = colorCode
         }
 
         binding.btnChangeColor.setOnClickListener {
@@ -250,6 +254,7 @@ class LibEditFragment : Fragment(), ColorObserver{
 
         seePreview.setOnClickListener {
             val intent = Intent(requireContext(), PreviewLibActivity::class.java)
+            intent.putExtra("PROPERTY", args.property)
             startActivity(intent)
 //            findNavController().navigate(LibEditFragmentDirections.actionLibEditFragmentToPreviewLibFragmnet())
 //            links = mutableListOf()
