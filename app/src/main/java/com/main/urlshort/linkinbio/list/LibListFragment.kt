@@ -57,7 +57,7 @@ class LibListFragment : Fragment(), SetOnEditLibListener {
         viewModel.getLibData(userid.toString())
 
         viewModel.respond.observe(viewLifecycleOwner){
-            adapter.data = it.data!!
+            adapter.data = it?.data!!
             Log.i("Lib Data", it.data.toString())
         }
         return binding.root

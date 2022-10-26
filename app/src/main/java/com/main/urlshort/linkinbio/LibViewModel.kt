@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 
 class LibViewModel: ViewModel() {
 
-    private val _respond = MutableLiveData<Respond>()
-    val respond: LiveData<Respond>
+    private val _respond = MutableLiveData<Respond?>()
+    val respond: LiveData<Respond?>
     get() = _respond
 
     private val _setting = MutableLiveData<Respond>()
@@ -46,9 +46,15 @@ class LibViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val editLib = UrlShortService.networkService.editLib(userid, links, titles, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor)
+                _respond.value = editLib
             }catch (e: Exception){
                 Log.e("Edit Lib Exception", e.message.toString())
             }
         }
+        resetValue()
+    }
+
+    private fun resetValue(){
+        _respond.value = null
     }
 }

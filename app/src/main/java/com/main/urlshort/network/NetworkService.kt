@@ -12,7 +12,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
 
-private val URL = "http://192.168.1.9:8080/"
+private val URL = "http://192.168.1.8:8080/"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -55,7 +55,7 @@ interface NetworkService{
     suspend fun editLib(@Query("user_id") userid: String, @Query("links[]") links: List<String>, @Query("titles[]") titles: List<String>, @Query("property") property: String,
                         @Query("background_type") backgroundType: String, @Query("first_color") firstColor: String, @Query("secondary_color") secondaryColor: String,
                         @Query("picture") picture: String, @Query("page_title") pageTitle: String, @Query("bio") bio: String, @Query("button_color") buttonColor: String,
-                        @Query("text_color") textColor: String)
+                        @Query("text_color") textColor: String) : Respond
 }
 
 object UrlShortService{

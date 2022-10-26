@@ -14,7 +14,7 @@
             android:paddingBottom="65dp">
 
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cvBackgroundColor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -40,6 +40,45 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <TextView
+                        android:id="@+id/tvBackgroundTypeError"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/red"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvSetBackgroundColor"
+                        tools:text="background type error" />
+
+                    <TextView
+                        android:id="@+id/tvBackgroundColorError"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/red"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvBackgroundTypeError"
+                        tools:text="background color error" />
+
+                    <TextView
+                        android:id="@+id/tvSecondaryColorError"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/red"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvBackgroundColorError"
+                        tools:text="secondary color error" />
+
                     <View
                         android:id="@+id/separator"
                         android:layout_width="match_parent"
@@ -48,7 +87,7 @@
                         android:background="?android:attr/listDivider"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvSetBackgroundColor" />
+                        app:layout_constraintTop_toBottomOf="@+id/tvSecondaryColorError" />
 
                     <TextView
                         android:id="@+id/tvCurrentColor"
@@ -161,7 +200,7 @@
                         app:layout_constraintStart_toStartOf="@+id/gradientcolor"
                         app:layout_constraintTop_toTopOf="@+id/gradientcolor" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cvPageTitle"
@@ -275,12 +314,12 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Page Title"
+                            android:hint="Bio"
                             android:inputType="text" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <Button
-                        android:id="@+id/button"
+                        android:id="@+id/btnapplysetting"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Apply Setting"
@@ -296,7 +335,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cvAddLink"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -323,6 +362,32 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <TextView
+                        android:id="@+id/tvLinkError"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/red"
+                        android:visibility="gone"
+                        tools:text="Error Link"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvAddLink"/>
+
+                    <TextView
+                        android:id="@+id/tvTitleError"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/red"
+                        android:visibility="gone"
+                        tools:text="Error Link"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvLinkError"/>
+
                     <View
                         android:id="@+id/separator3"
                         android:layout_width="match_parent"
@@ -331,7 +396,7 @@
                         android:background="?android:attr/listDivider"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvAddLink" />
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitleError" />
 
                     <Button
                         android:id="@+id/buttonAddLink"
@@ -422,9 +487,9 @@
                     <!-- End Should Be Dynamic On Button Add Link Click -->
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cvButtonTextColor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -450,6 +515,32 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <TextView
+                        android:id="@+id/tvButtonColorError"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/red"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvSetButtonTextColor"
+                        tools:text="button color error" />
+
+                    <TextView
+                        android:id="@+id/tvButtonTextColorError"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/red"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvButtonColorError"
+                        tools:text="button text color error" />
+
                     <View
                         android:id="@+id/separator4"
                         android:layout_width="match_parent"
@@ -458,7 +549,7 @@
                         android:background="?android:attr/listDivider"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvSetButtonTextColor" />
+                        app:layout_constraintTop_toBottomOf="@+id/tvButtonTextColorError" />
 
                     <TextView
                         android:id="@+id/tvCurrentButtonColor"
@@ -581,7 +672,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/colorPickerText" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </layout>

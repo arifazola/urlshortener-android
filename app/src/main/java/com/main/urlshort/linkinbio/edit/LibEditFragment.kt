@@ -54,7 +54,7 @@ class LibEditFragment : Fragment(), ColorObserver{
     private var property: String = ""
     private var backgroundType: String = ""
     private var firstColor: String = ""
-    private var secondaryColor: String = ""
+    private var secondaryColor: String = "#000000"
     private var picture: String = ""
     private var pageTitle: String = ""
     private var bio: String = ""
@@ -111,11 +111,13 @@ class LibEditFragment : Fragment(), ColorObserver{
         binding.flatcolor.setOnClickListener {
             binding.flatcolor.setBackgroundResource(R.drawable.flat_border)
             binding.gradientcolor.setBackgroundResource(R.drawable.gradient_noborder)
+            backgroundType = "flat-color-text"
         }
 
         binding.gradientcolor.setOnClickListener {
             binding.flatcolor.setBackgroundResource(R.drawable.flat_noborder)
             binding.gradientcolor.setBackgroundResource(R.drawable.gradient_border)
+            backgroundType = "gradient-color-text"
         }
 
         binding.btnChangeColor.setOnClickListener {
@@ -268,6 +270,7 @@ class LibEditFragment : Fragment(), ColorObserver{
         val customSave = (requireActivity() as AppCompatActivity).supportActionBar?.customView
         val save = customSave?.findViewById<ImageView>(R.id.imgSave)
         save?.setOnClickListener {
+            viewModel.respond.removeObservers(viewLifecycleOwner)
             links = mutableListOf()
             linkText = mutableListOf()
             for(i in 0 .. listLink.size - 1){
@@ -275,7 +278,110 @@ class LibEditFragment : Fragment(), ColorObserver{
                 linkText.add(i, listLink.values.elementAt(i).get(1))
             }
             viewModel.editlib(userid!!, links, linkText, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor)
+
+            viewModel.respond.observe(viewLifecycleOwner){
+                Log.i("Edit Lib Respons", it.toString())
+
+                if(it?.error?.get(0)?.pageTitle != null){
+                    binding.tilPageTitle.isErrorEnabled = true
+                    binding.tilPageTitle.error = it.error?.get(0)?.pageTitle
+                } else {
+                    binding.tilPageTitle.isErrorEnabled = false
+                }
+
+                if(it?.error?.get(0)?.bio != null){
+                    binding.tilBio.isErrorEnabled = true
+                    binding.tilBio.error = it.error?.get(0)?.bio
+                } else {
+                    binding.tilBio.isErrorEnabled = false
+                }
+
+                if(it?.error?.get(0)?.links != null){
+                    binding.cvAddLink.strokeColor = Color.RED
+                    binding.cvAddLink.strokeWidth = 2
+                    binding.tvLinkError.text = it.error.get(0).links
+                    binding.tvLinkError.visibility = View.VISIBLE
+                }
+
+                if(it?.error?.get(0)?.titles != null){
+                    binding.cvAddLink.strokeColor = Color.RED
+                    binding.cvAddLink.strokeWidth = 2
+                    binding.tvTitleError.text = it.error.get(0).titles
+                    binding.tvTitleError.visibility = View.VISIBLE
+                }
+
+                if(it?.error?.get(0)?.titles == null  && it?.error?.get(0)?.links == null){
+                    binding.cvAddLink.strokeColor = 0
+                    binding.cvAddLink.strokeWidth = 0
+                    binding.tvLinkError.visibility = View.GONE
+                    binding.tvTitleError.visibility = View.GONE
+                }
+
+                if(it?.error?.get(0)?.backgroundType != null){
+                    binding.cvBackgroundColor.strokeColor = Color.RED
+                    binding.cvBackgroundColor.strokeWidth = 2
+                    binding.tvBackgroundTypeError.text = "Please select between Flat Color or Gradient Color"
+                    binding.tvBackgroundTypeError.visibility = View.VISIBLE
+                }
+
+                if(it?.error?.get(0)?.firstColor != null){
+                    binding.cvBackgroundColor.strokeColor = Color.RED
+                    binding.cvBackgroundColor.strokeWidth = 2
+                    binding.tvBackgroundColorError.text = "Background color cannot be empty. Please set background color"
+                    binding.tvBackgroundColorError.visibility = View.VISIBLE
+                }
+
+                if(it?.error?.get(0)?.secondaryColor != null){
+                    binding.cvBackgroundColor.strokeColor = Color.RED
+                    binding.cvBackgroundColor.strokeWidth = 2
+                    binding.tvSecondaryColorError.text = "Error while creating secondary color for gradient. Please reopen the page"
+                    binding.tvSecondaryColorError.visibility = View.VISIBLE
+                }
+
+                if(it?.error?.get(0)?.backgroundType == null && it?.error?.get(0)?.firstColor == null && it?.error?.get(0)?.secondaryColor == null){
+                    binding.cvBackgroundColor.strokeColor = 0
+                    binding.cvBackgroundColor.strokeWidth = 0
+                    binding.tvBackgroundTypeError.visibility =  View.GONE
+                    binding.tvBackgroundColorError.visibility = View.GONE
+                    binding.tvSecondaryColorError.visibility = View.GONE
+                }
+
+                if(it?.error?.get(0)?.buttoncolor != null){
+                    binding.cvButtonTextColor.strokeColor = Color.RED
+                    binding.cvButtonTextColor.strokeWidth = 2
+                    binding.tvButtonColorError.text = "Button color cannot be empty. Please set button color"
+                    binding.tvButtonColorError.visibility = View.VISIBLE
+                }
+
+                if(it?.error?.get(0)?.text != null){
+                    binding.cvButtonTextColor.strokeColor = Color.RED
+                    binding.cvButtonTextColor.strokeWidth = 2
+                    binding.tvButtonTextColorError.text = "Button text color cannot be empty. Please set button text color"
+                    binding.tvButtonTextColorError.visibility = View.VISIBLE
+                }
+
+                if(it?.error?.get(0)?.buttoncolor == null && it?.error?.get(0)?.text == null){
+                    binding.cvButtonTextColor.strokeColor = 0
+                    binding.cvButtonTextColor.strokeWidth = 0
+                    binding.tvButtonColorError.visibility = View.GONE
+                    binding.tvButtonTextColorError.visibility = View.GONE
+
+                }
+            }
         }
+
+        binding.btnapplysetting.setOnClickListener {
+            val tilUrlpicture = binding.tilImageUrl.editText?.text.toString()
+            val tilTitle = binding.tilPageTitle.editText?.text.toString()
+            val tilBio = binding.tilBio.editText?.text.toString()
+
+            picture = tilUrlpicture
+            pageTitle = tilTitle
+            bio = tilBio
+
+            Utils.showToast(requireContext(), "Page title is set")
+        }
+
         return binding.root
     }
 

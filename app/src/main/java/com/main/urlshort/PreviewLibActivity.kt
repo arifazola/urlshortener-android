@@ -10,7 +10,7 @@ class PreviewLibActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val webView = WebView(this)
         setContentView(webView)
-        webView.loadUrl("http://192.168.1.9:8080/landingpage3")
+        webView.loadUrl("http://192.168.1.8:8080/landingpage3")
         webView.settings.javaScriptEnabled = true
     }
 }
