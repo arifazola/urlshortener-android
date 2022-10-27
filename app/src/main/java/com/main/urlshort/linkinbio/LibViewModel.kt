@@ -54,6 +54,18 @@ class LibViewModel: ViewModel() {
         resetValue()
     }
 
+    fun createLib(backHalf: String, createdBy: String){
+        viewModelScope.launch {
+            try {
+                val addLib = UrlShortService.networkService.addLib(backHalf, createdBy)
+                _respond.value = addLib
+            }catch (e: Exception){
+                Log.e("Add Lib Exception", e.message.toString())
+            }
+        }
+        resetValue()
+    }
+
     private fun resetValue(){
         _respond.value = null
     }

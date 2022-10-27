@@ -56,6 +56,10 @@ interface NetworkService{
                         @Query("background_type") backgroundType: String, @Query("first_color") firstColor: String, @Query("secondary_color") secondaryColor: String,
                         @Query("picture") picture: String, @Query("page_title") pageTitle: String, @Query("bio") bio: String, @Query("button_color") buttonColor: String,
                         @Query("text_color") textColor: String) : Respond
+
+    @FormUrlEncoded
+    @POST("api/linkinbio/create")
+    suspend fun addLib(@Field("back_half") backhalf: String, @Field("created_by") createdBy: String): Respond
 }
 
 object UrlShortService{

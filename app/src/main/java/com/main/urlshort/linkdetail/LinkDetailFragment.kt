@@ -28,6 +28,8 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.main.urlshort.R
 import com.main.urlshort.Utils
@@ -166,6 +168,7 @@ class LinkDetailFragment : Fragment() {
             val data = BarData(barDataSet)
             val xAxis = chart.xAxis
             val rightAxis = chart.axisRight
+            val leftAxis = chart.axisLeft
             val description = chart.description
 
             val dateFormatter = AxisDateformatter(date)
@@ -173,6 +176,8 @@ class LinkDetailFragment : Fragment() {
             xAxis.position = XAxis.XAxisPosition.BOTTOM
             rightAxis.isEnabled = false
             description.isEnabled = false
+            leftAxis.setDrawZeroLine(false)
+            rightAxis.setDrawZeroLine(false)
             data.barWidth = 0.9f
             chart.data = data
             chart.setFitBars(true)

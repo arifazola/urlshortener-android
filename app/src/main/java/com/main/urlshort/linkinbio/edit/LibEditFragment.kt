@@ -372,6 +372,17 @@ class LibEditFragment : Fragment(), ColorObserver{
                     binding.tvButtonTextColorError.visibility = View.GONE
 
                 }
+
+                if(it?.data?.get(0)?.msg == true){
+                    Utils.showToast(requireContext(), "Settings saved")
+                    val intent = Intent(requireContext(), PreviewLibActivity::class.java)
+                    intent.putExtra("PROPERTY", args.property)
+                    startActivity(intent)
+                }
+
+                if(it?.data?.get(0)?.msg == false){
+                    Utils.showToast(requireContext(), "Internal Server Error. Please Try Again")
+                }
             }
         }
 

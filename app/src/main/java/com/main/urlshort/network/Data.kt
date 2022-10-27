@@ -37,6 +37,7 @@ data class DataContent(
      @Json(name = "button_color") val buttoncolor: String?,
      @Json(name = "text_color") val textColor: String?,
      @Json(name = "links") val links: List<Links>?,
+     val duplicate: String?
 )
 
 data class ErrorMsg(
