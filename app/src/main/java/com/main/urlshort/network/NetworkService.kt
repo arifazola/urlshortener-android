@@ -12,7 +12,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
 
-private val URL = "http://192.168.1.7:8080/"
+private val URL = "http://192.168.1.8:8080/"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -60,6 +60,9 @@ interface NetworkService{
     @FormUrlEncoded
     @POST("api/linkinbio/create")
     suspend fun addLib(@Field("back_half") backhalf: String, @Field("created_by") createdBy: String): Respond
+
+    @GET("api/dashboard")
+    suspend fun getdatadashboard(@Query("userid") userid: String): Respond
 }
 
 object UrlShortService{

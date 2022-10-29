@@ -9,4 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="grey">#C5C7C9</color>
     <color name="red">#ed2d33</color>
+    <color name="piewindow">#001866</color>
+    <color name="pieandroid">#FF416A</color>
+    <color name="pieios">#36A2EB</color>
+    <color name="pieiospc">#FFCD56</color>
+    <color name="pieotherdevice">#FF6217</color>
 </resources>

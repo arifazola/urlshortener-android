@@ -93,7 +93,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <com.github.mikephil.charting.charts.BarChart
+                        <com.github.mikephil.charting.charts.PieChart
                             android:id="@+id/chartUserDevice"
                             android:layout_width="match_parent"
                             android:layout_height="400dp"
@@ -291,7 +291,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <com.github.mikephil.charting.charts.BarChart
+                        <com.github.mikephil.charting.charts.PieChart
                             android:id="@+id/chartReferer"
                             android:layout_width="match_parent"
                             android:layout_height="400dp"

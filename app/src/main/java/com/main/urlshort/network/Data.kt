@@ -37,7 +37,12 @@ data class DataContent(
      @Json(name = "button_color") val buttoncolor: String?,
      @Json(name = "text_color") val textColor: String?,
      @Json(name = "links") val links: List<Links>?,
-     val duplicate: String?
+     val duplicate: String?,
+     @Json(name = "most_visited_link") val mostVisitedLink: List<MostVisitedLinks>?,
+     val device: List<Device>?,
+     val country: List<Country>?,
+     val city: List<City>?,
+     val referer: List<Referer>?
 )
 
 data class ErrorMsg(
@@ -70,4 +75,29 @@ data class Links(
     @Json(name = "lib_property") val libProperty: String?,
     val link: String?,
     val text: String?
+)
+
+data class MostVisitedLinks(
+    @Json(name = "url_id") val urlid: String,
+    @Json(name = "url_short") val urlshort: String
+)
+
+data class Device(
+    @Json(name = "url_id") val urlid: String,
+    val device: String
+)
+
+data class Country(
+    @Json(name = "url_id") val urlid: String,
+    val country: String
+)
+
+data class City(
+    @Json(name = "url_id") val urlid: String,
+    val city: String
+)
+
+data class Referer(
+    @Json(name = "url_id") val urlid: String,
+    val referer: String
 )
