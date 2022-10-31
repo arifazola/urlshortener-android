@@ -12,7 +12,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
 
-private val URL = "http://192.168.1.8:8080/"
+private val URL = "http://192.168.1.6:8080/"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -63,6 +63,10 @@ interface NetworkService{
 
     @GET("api/dashboard")
     suspend fun getdatadashboard(@Query("userid") userid: String): Respond
+
+    @FormUrlEncoded
+    @POST("api/signup/authgoogle")
+    suspend fun authGoogle(@Field("email") email: String, @Field("name") name: String): Respond
 }
 
 object UrlShortService{

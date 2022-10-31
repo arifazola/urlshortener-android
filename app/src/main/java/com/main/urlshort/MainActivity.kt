@@ -1,6 +1,7 @@
 package com.main.urlshort
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -139,6 +140,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_lib -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.libListFragment)
+                return true
+            }
+            R.id.nav_signout -> {
+                val googleAuth = GoogleAuth(this)
+//                googleAuth.initialize(this)
+                googleAuth.googleSignInClient.signOut().addOnCompleteListener {
+                    Utils.removeSharedPreferences(sharedPreferences, "userid")
+                    Utils.removeSharedPreferences(sharedPreferences, "fullname")
+                    Utils.removeSharedPreferences(sharedPreferences, "email")
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                }
                 return true
             }
             else -> return false

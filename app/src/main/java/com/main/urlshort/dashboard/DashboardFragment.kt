@@ -3,24 +3,17 @@ package com.main.urlshort.dashboard
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.DefaultValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.main.urlshort.R
 import com.main.urlshort.SHARED_PREF_KEY
 import com.main.urlshort.Utils
@@ -37,7 +30,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [DashboardFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class DashboardFragment : Fragment() {
+class DashboardFragment : Fragment(), OnChartValueSelectedListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -228,16 +221,41 @@ class DashboardFragment : Fragment() {
                 }
 
                 val refererSet = PieDataSet(refererEntry, "")
-                refererSet.setColors(intArrayOf(R.color.pieandroid, R.color.pieios, R.color.pieiospc, R.color.pieotherdevice, R.color.teal_200), requireContext())
+                val colorSet = mutableListOf(Color.rgb(193, 37, 82), Color.rgb(255, 102, 0), Color.rgb(245, 199, 0),
+                    Color.rgb(106, 150, 31), Color.rgb(179, 100, 53))
+                if(it.data?.get(0)?.referer!!.size > 5){
+                    for(i in 1 .. it.data?.get(0)?.referer!!.size - 5){
+                        val random = java.util.Random()
+                        val newColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256))
+                        colorSet.add(newColor)
+                        Log.i("Apakah Iterate", i.toString())
+                    }
+                    Log.i("Apakah Masuk", colorSet.get(5).toString())
+                }
+//                refererSet.xValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
+//                refererSet.yValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
+                refererSet.setColors(colorSet)
                 refererSet.valueFormatter = DefaultValueFormatter(0)
                 val refererData = PieData(refererSet)
+                refererChart.minAngleForSlices = 20f
                 refererChart.legend.isWordWrapEnabled = true
                 refererChart.legend.orientation = Legend.LegendOrientation.HORIZONTAL
                 refererChart.description.isEnabled = false
                 refererChart.data = refererData
+
+                refererChart.setOnChartValueSelectedListener(this)
                 refererChart.invalidate()
                 Log.i("Dashboard Data", citySet.toString())
             }
         }
+    }
+
+    override fun onValueSelected(e: Entry?, h: Highlight?) {
+        val pieEntry = e as PieEntry
+        binding.chartReferer.centerText = "${pieEntry.label}: ${h?.y?.toInt()} references"
+    }
+
+    override fun onNothingSelected() {
+        binding.chartReferer.centerText = ""
     }
 }

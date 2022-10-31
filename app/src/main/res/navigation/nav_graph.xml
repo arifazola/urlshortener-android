@@ -8,12 +8,12 @@
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="com.main.urlshort.dashboard.DashboardFragment"
-        android:label="fragment_dashboard"
+        android:label="Dashboard"
         tools:layout="@layout/fragment_dashboard" />
     <fragment
         android:id="@+id/linksFragment"
         android:name="com.main.urlshort.links.LinksFragment"
-        android:label="LinksFragment" >
+        android:label="Links">
         <action
             android:id="@+id/action_linksFragment_to_linkDetailFragment"
             app:destination="@id/linkDetailFragment" />
@@ -61,7 +61,7 @@
     <fragment
         android:id="@+id/libListFragment"
         android:name="com.main.urlshort.linkinbio.list.LibListFragment"
-        android:label="LibListFragment" >
+        android:label="Link-In-Bio">
         <action
             android:id="@+id/action_libListFragment_to_libEditFragment"
             app:destination="@id/libEditFragment" />

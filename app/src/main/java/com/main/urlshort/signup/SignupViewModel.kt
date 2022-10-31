@@ -37,6 +37,23 @@ class SignupViewModel: ViewModel() {
         resetValue()
     }
 
+    fun authGoogle(email: String, name: String){
+        viewModelScope.launch {
+            try {
+                val auth = UrlShortService.networkService.authGoogle(email, name)
+                _respond.value = auth
+                if(auth.error == null){
+                    _isSignedupSuccess.value = true
+                } else {
+                    _isSignedupSuccess.value = false
+                }
+            }catch (e: Exception){
+                Log.e("Auth Google Exception", e.message.toString())
+            }
+        }
+        resetValue()
+    }
+
     fun resetValue(){
         _isSignedupSuccess.value = null
     }
