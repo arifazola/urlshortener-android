@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -282,10 +283,14 @@ class LibEditFragment : Fragment(), ColorObserver{
                 links.add(i, listLink.values.elementAt(i).get(0))
                 linkText.add(i, listLink.values.elementAt(i).get(1))
             }
-            viewModel.editlib(userid!!, links, linkText, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor)
+            viewModel.editlib(userid.toString(), links, linkText, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor)
 
             viewModel.respond.observe(viewLifecycleOwner){
                 Log.i("Edit Lib Respons", it.toString())
+
+                if(it?.error?.get(0)?.errorMsg == "Unauthorized"){
+                    Toast.makeText(requireContext(), "Trying to access unauthorized property. If this is a mistake, reopen the page.", Toast.LENGTH_LONG).show()
+                }
 
                 if(it?.error?.get(0)?.pageTitle != null){
                     binding.tilPageTitle.isErrorEnabled = true

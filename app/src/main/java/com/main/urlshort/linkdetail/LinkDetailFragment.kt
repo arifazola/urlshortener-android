@@ -2,11 +2,7 @@ package com.main.urlshort.linkdetail
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
@@ -32,6 +29,7 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.main.urlshort.R
+import com.main.urlshort.SHARED_PREF_KEY
 import com.main.urlshort.Utils
 import com.main.urlshort.databinding.FragmentLinkDetailBinding
 import java.text.DecimalFormat
@@ -56,6 +54,7 @@ class LinkDetailFragment : Fragment() {
     private lateinit var viewModel: LinkDetailViewModel
     private lateinit var edit: ImageView
     private lateinit var save: ImageView
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +71,7 @@ class LinkDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentLinkDetailBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(LinkDetailViewModel::class.java)
+        sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
 //        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fabAddLink)
         val args = LinkDetailFragmentArgs.fromBundle(requireArguments())
         customActionBar = (requireActivity() as AppCompatActivity).supportActionBar?.customView!!
@@ -120,10 +120,16 @@ class LinkDetailFragment : Fragment() {
 
         val title = binding.etTitleEdit.text.toString()
         val backHalf = binding.etBackHalf.text.toString()
+        val userid = sharedPreferences.getString("userid", null)
 
-        viewModel.editLink(urlid, title, backHalf)
+        viewModel.editLink(urlid, title, backHalf, userid.toString())
 
         viewModel.respond.observe(viewLifecycleOwner){
+
+            if(it?.error?.get(0)?.errorMsg == "Unauthorized"){
+                Toast.makeText(requireContext(), "Trying to access unauthorized property. If this is a mistake, reopen the page.", Toast.LENGTH_LONG).show()
+            }
+
             if(it?.error?.get(0)?.title != null){
                 binding.etTitleEdit.error = it.error.get(0).title
             }
