@@ -97,7 +97,7 @@ class LinkDetailFragment : Fragment() {
         }
 
         binding.materialButton2.setOnClickListener {
-            val dialog = DialogShare(args.urlshort)
+            val dialog = DialogShare(R.array.share, args.urlshort)
             dialog.show(requireFragmentManager(), "Share Dialog")
         }
 
@@ -229,10 +229,10 @@ class AxisDateformatter(val values: ArrayList<String>): ValueFormatter(){
     }
 }
 
-class DialogShare(val shortUrl: String): DialogFragment(){
+class DialogShare(val arrayItem: Int, val shortUrl: String): DialogFragment(){
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setItems(R.array.share, DialogInterface.OnClickListener { dialogInterface, i ->
+        builder.setItems(arrayItem, DialogInterface.OnClickListener { dialogInterface, i ->
 
             if(i == 1){
                 val intent = Intent(Intent.ACTION_SEND)

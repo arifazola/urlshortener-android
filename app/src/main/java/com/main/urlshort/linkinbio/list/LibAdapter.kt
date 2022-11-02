@@ -1,22 +1,27 @@
 package com.main.urlshort.linkinbio.list
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.main.urlshort.R
+import com.main.urlshort.linkdetail.DialogShare
 import com.main.urlshort.network.DataContent
 import com.main.urlshort.network.Respond
 
 class LibAdapter: RecyclerView.Adapter<LibAdapter.ViewHolder>() {
 
     var onEditLibListener: SetOnEditLibListener? = null
+    var onLongClickEditLibListener: SetOnLongClickEditLibListener? = null
 
     class ViewHolder(item: View): RecyclerView.ViewHolder(item){
         val libName = item.findViewById<TextView>(R.id.tvLibName)
-        var edit = item.findViewById<Button>(R.id.btnCustomize)
+        val clList = item.findViewById<ConstraintLayout>(R.id.clList)
     }
 
     var data = listOf<DataContent>()
@@ -34,8 +39,12 @@ class LibAdapter: RecyclerView.Adapter<LibAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = data[position]
         holder.libName.text = item.urlShort
-        holder.edit.setOnClickListener {
+        holder.clList.setOnClickListener {
             onEditLibListener?.onEditLibListener(item.urlShort.toString())
+        }
+        holder.clList.setOnLongClickListener {
+            onLongClickEditLibListener?.onLongClickEditLibListener(item.urlShort.toString())
+            return@setOnLongClickListener true
         }
     }
 
@@ -46,4 +55,8 @@ class LibAdapter: RecyclerView.Adapter<LibAdapter.ViewHolder>() {
 
 interface SetOnEditLibListener{
     fun onEditLibListener(property: String)
+}
+
+interface SetOnLongClickEditLibListener{
+    fun onLongClickEditLibListener(property: String)
 }

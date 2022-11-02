@@ -19,6 +19,11 @@ class LibViewModel: ViewModel() {
     val setting: LiveData<Respond>
     get() = _setting
 
+    private val _delete = MutableLiveData<Respond?>()
+    val delete: LiveData<Respond?>
+        get() = _delete
+
+
     fun getLibData(userid: String){
         viewModelScope.launch {
             try {
@@ -66,7 +71,23 @@ class LibViewModel: ViewModel() {
         resetValue()
     }
 
+    fun deleteLib(userid: String, urlShort: String){
+        viewModelScope.launch {
+            try {
+                val delete = UrlShortService.networkService.deleteLib(userid, urlShort)
+                _delete.value = delete
+            }catch (e: Exception){
+                Log.e("Delete Lib Exception", e.message.toString())
+            }
+        }
+        resetDelete()
+    }
+
     private fun resetValue(){
         _respond.value = null
+    }
+
+    private fun resetDelete(){
+        _delete.value = null
     }
 }

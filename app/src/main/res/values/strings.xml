@@ -19,6 +19,12 @@
         <item>Share</item>
     </string-array>
 
+    <string-array name="lib_option">
+        <item>Edit</item>
+        <item>Share</item>
+        <item>Delete</item>
+    </string-array>
+
     <item name="cv_link_form" type="id"></item>
     <item name="cl_inner" type="id"></item>
     <item name="et_link" type="id"></item>

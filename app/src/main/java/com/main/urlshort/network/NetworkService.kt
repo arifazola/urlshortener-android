@@ -65,6 +65,9 @@ interface NetworkService{
 
     @DELETE("api/links/delete/{userid}/{shortUrl}")
     suspend fun deleteLink(@Path("userid") userid: String, @Path("shortUrl") shortUrl: String): Respond
+
+    @DELETE("api/lib/delete/{userid}/{shortUrl}")
+    suspend fun deleteLib(@Path("userid") userid: String, @Path("shortUrl") shortUrl: String): Respond
 }
 
 object UrlShortService{
