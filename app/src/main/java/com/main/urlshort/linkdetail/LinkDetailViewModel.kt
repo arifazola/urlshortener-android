@@ -43,6 +43,18 @@ class LinkDetailViewModel: ViewModel() {
         }
     }
 
+    fun deleteLink(userid: String, urlshort: String){
+        viewModelScope.launch {
+            try {
+                val delete = UrlShortService.networkService.deleteLink(userid, urlshort)
+                _respond.value = delete
+            }catch (e: Exception){
+                Log.e("Delete Link Exception", e.message.toString())
+            }
+        }
+        resetValue()
+    }
+
     private fun resetValue(){
         _respond.value = null
     }

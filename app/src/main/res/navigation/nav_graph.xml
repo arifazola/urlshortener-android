@@ -37,6 +37,16 @@
             app:argType="string" />
         <argument android:name="urlid"
             app:argType="string" />
+        <action
+            android:id="@+id/action_linkDetailFragment_to_allLinkFragment"
+            app:destination="@id/allLinkFragment"
+            app:popUpTo="@id/allLinkFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_linkDetailFragment_to_linksFragment2"
+            app:destination="@id/linksFragment"
+            app:popUpTo="@id/linksFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/allLinkFragment"

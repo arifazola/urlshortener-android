@@ -100,7 +100,32 @@ class LinkDetailFragment : Fragment() {
             val dialog = DialogShare(args.urlshort)
             dialog.show(requireFragmentManager(), "Share Dialog")
         }
+
+        binding.btnDeleteLink.setOnClickListener {
+            val userid = sharedPreferences.getString("userid", null)
+            deleteLink(userid.toString(), args.urlshort)
+        }
         return binding.root
+    }
+
+    private fun deleteLink(userid: String, urlshort: String){
+        viewModel.respond.removeObservers(viewLifecycleOwner)
+        viewModel.deleteLink(userid, urlshort)
+
+        viewModel.respond.observe(viewLifecycleOwner){
+
+            if(it?.error?.get(0)?.errorMsg != null){
+                Utils.showToast(requireContext(), it.error.get(0).errorMsg.toString())
+            }
+
+            if(it?.data?.get(0)?.msg != null){
+                findNavController().navigate(LinkDetailFragmentDirections.actionLinkDetailFragmentToLinksFragment2())
+                Utils.showToast(requireContext(), "Link deleted")
+            }
+
+
+            Log.i("Data Link Detele", it.toString())
+        }
     }
 
     private fun editLink(){

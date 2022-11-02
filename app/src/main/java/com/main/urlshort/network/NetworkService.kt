@@ -5,14 +5,9 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Query
+import retrofit2.http.*
 
-private val URL = "http://192.168.1.6:8080/"
+private val URL = "http://192.168.1.7:8080/"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -67,6 +62,9 @@ interface NetworkService{
     @FormUrlEncoded
     @POST("api/signup/authgoogle")
     suspend fun authGoogle(@Field("email") email: String, @Field("name") name: String): Respond
+
+    @DELETE("api/links/delete/{userid}/{shortUrl}")
+    suspend fun deleteLink(@Path("userid") userid: String, @Path("shortUrl") shortUrl: String): Respond
 }
 
 object UrlShortService{
