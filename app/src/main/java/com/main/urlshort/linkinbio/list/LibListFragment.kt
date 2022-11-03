@@ -76,6 +76,19 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
             openBottomSheet()
         }
 
+        viewModel.delete.observe(viewLifecycleOwner){
+            if(it?.data?.get(0)?.msg != null){
+                viewModel.getLibData(userid)
+                val respond = viewModel.respond.value
+                adapter.data = respond?.data!!
+            }
+
+            if(it?.error?.get(0)?.errorMsg != null){
+                Utils.showToast(requireContext(), it.error.get(0).errorMsg.toString())
+                Log.e("Delete Lib", it.error.get(0).errorMsg.toString())
+            }
+        }
+
         Log.i("Recreate", "Recreate")
         return binding.root
     }
@@ -172,35 +185,8 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
                 if(i == 0){
                     findNavController().navigate(LibListFragmentDirections.actionLibListFragmentToLibEditFragment(shortUrl))
                 } else {
+                    viewModel.delete.removeObservers(requireActivity())
                     viewModel.deleteLib(userid, shortUrl)
-
-                    viewModel.delete.observe(requireActivity()){
-                        if(it?.error?.get(0)?.errorMsg != null){
-                            Utils.showToast(requireContext(), it.error.get(0).errorMsg.toString())
-                        }
-
-                        if(it?.data?.get(0)?.msg != null){
-//                            findNavController().navigate(LinkDetailFragmentDirections.actionLinkDetailFragmentToLinksFragment2())
-//                            Utils.showToast(requireContext(), "Link deleted")
-//                            adapter.notifyDataSetChanged()
-                            viewModel.getLibData(userid)
-
-                            viewModel.respond.observe(requireActivity()){
-                                adapter.data = it?.data!!
-                                adapter.notifyDataSetChanged()
-                                Log.i("Delete Lib", it.toString())
-                            }
-                        }
-                    }
-
-
-//                    viewModel.getLibData(userid)
-//
-//                    viewModel.respond.observe(requireActivity()){
-//                        adapter.data = it?.data!!
-//                        adapter.notifyDataSetChanged()
-//                        Log.i("Delete Lib", it.toString())
-//                    }
                 }
             })
             return builder.create()
