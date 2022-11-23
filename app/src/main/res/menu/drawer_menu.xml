@@ -18,6 +18,11 @@
             android:title="Link In Bio" />
 
         <item
+            android:id="@+id/nav_performance"
+            android:icon="@drawable/ic_baseline_bar_chart_24"
+            android:title="Links Performance" />
+
+        <item
             android:id="@+id/nav_signout"
             android:icon="@drawable/ic_baseline_logout_24"
             android:title="Sign Out" />

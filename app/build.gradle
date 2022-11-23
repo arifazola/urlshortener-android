@@ -109,8 +109,11 @@ dependencies {
     //Google Play Service Auth
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
 
-    //Multidex
-//    implementation 'com.android.support:multidex:1.0.3'
+    //Sliders
+    implementation 'com.github.IslamKhSh:CardSlider:1.0.1'
+
+    //Lottie
+    implementation "com.airbnb.android:lottie:5.2.0"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

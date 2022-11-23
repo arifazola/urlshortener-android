@@ -43,7 +43,8 @@ data class DataContent(
      val device: List<Device>?,
      val country: List<Country>?,
      val city: List<City>?,
-     val referer: List<Referer>?
+     val referer: List<Referer>?,
+     @Json(name = "subs_growth") val subsGrowth: List<SubsGrowth>?
 )
 
 data class ErrorMsg(
@@ -65,7 +66,8 @@ data class ErrorMsg(
     val bio: String?,
     @Json(name = "button_color") val buttoncolor: String?,
     @Json(name = "text_color") val text: String?,
-    @Json(name = "limit_lib") val limitLib: String?
+    @Json(name = "limit_lib") val limitLib: String?,
+    @Json(name = "limit_dashboard") val limitDashboard: String?
 )
 
 data class StatsData(
@@ -102,4 +104,9 @@ data class City(
 data class Referer(
     @Json(name = "url_id") val urlid: String,
     val referer: String
+)
+
+data class SubsGrowth(
+    val month: String,
+    @Json(name = "subs_data") val subsData: String
 )

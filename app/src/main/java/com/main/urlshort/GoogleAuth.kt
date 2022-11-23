@@ -49,6 +49,7 @@ class GoogleAuth(context: Context){
                         Utils.sharedPreferenceString(sharedPreferences, "userid", data!!.data!!.get(0).userid!!)
                         Utils.sharedPreferenceString(sharedPreferences, "fullname", data!!.data!!.get(0).fullname!!)
                         Utils.sharedPreferenceString(sharedPreferences, "email", account.email.toString())
+                        Utils.sharedPreferenceString(sharedPreferences, "accountType", data!!.data!!.get(0).accountType!!)
 
                         val intent = Intent(context, MainActivity::class.java)
                         activity.finish()

@@ -16,6 +16,7 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.main.urlshort.R
 import com.main.urlshort.SHARED_PREF_KEY
+import com.main.urlshort.SlidersAdapter
 import com.main.urlshort.Utils
 import com.main.urlshort.databinding.FragmentDashboardBinding
 import com.main.urlshort.linkdetail.AxisDateformatter
@@ -54,8 +55,13 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener {
         // Inflate the layout for this fragment
         binding = FragmentDashboardBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
-        sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY,  Context.MODE_PRIVATE)
+        sharedPreferences =
+            requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val userid = sharedPreferences.getString("userid", null)
+
+        val dataSliders = arrayListOf<String>("10", "20", "30", "40")
+        val adapter = SlidersAdapter(dataSliders)
+        binding.viewPager.adapter = adapter
 
 //        viewModel.getdata(userid!!)
 //
@@ -67,8 +73,9 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener {
         return binding.root
     }
 
-    private fun setMostVisitedLinkChart(userid: String){
-        viewModel.getdata(userid)
+    private fun setMostVisitedLinkChart(userid: String) {
+        val accountType = sharedPreferences.getString("accountType", null);
+        viewModel.getdata(userid, accountType.toString())
 //        link.add("Lah")
 //        link.add("Lah")
 //        link.add("Lah")
@@ -87,165 +94,258 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener {
 //        chart.data = barDataSet
 //        chart.setFitBars(true)
 
-        viewModel.respond.observe(viewLifecycleOwner){
+        viewModel.respond.observe(viewLifecycleOwner) {
             it?.let {
-                val chart = binding.chart
-                val entries: MutableList<BarEntry> = mutableListOf()
-                var link = ArrayList<String>()
-                for(i in 0..it.data?.get(0)?.mostVisitedLink!!.size - 1){
-                    entries.add(BarEntry(i.toFloat(), it.data.get(0).mostVisitedLink!!.get(i).urlid.toFloat()))
-                    link.add(it.data.get(0).mostVisitedLink!!.get(i).urlshort)
-                }
+                Log.e("Dashboard Data", it.toString())
+                if (it.error != null) {
+                    binding.clAlertTop.visibility = View.VISIBLE
+                    binding.chart.visibility = View.GONE
+                    binding.chartUserDevice.visibility = View.GONE
+                    binding.chartCountry.visibility = View.GONE
+                    binding.chartCity.visibility = View.GONE
+                    binding.chartSubsGrowth.visibility = View.GONE
+                    binding.chartReferer.visibility = View.GONE
+                    binding.animationView.visibility = View.VISIBLE
+                    binding.animationView2.visibility = View.VISIBLE
+                    binding.animationView3.visibility = View.VISIBLE
+                    binding.animationView4.visibility = View.VISIBLE
+                    binding.animationView5.visibility = View.VISIBLE
+                    binding.animationView6.visibility = View.VISIBLE
+                } else {
+                    binding.clAlertTop.visibility = View.GONE
+                    binding.chart.visibility = View.VISIBLE
+                    binding.chartUserDevice.visibility = View.VISIBLE
+                    binding.chartCountry.visibility = View.VISIBLE
+                    binding.chartCity.visibility = View.VISIBLE
+                    binding.chartSubsGrowth.visibility = View.VISIBLE
+                    binding.chartReferer.visibility = View.VISIBLE
+                    binding.animationView.visibility = View.GONE
+                    binding.animationView2.visibility = View.GONE
+                    binding.animationView3.visibility = View.GONE
+                    binding.animationView4.visibility = View.GONE
+                    binding.animationView5.visibility = View.GONE
+                    binding.animationView6.visibility = View.GONE
+                    val chart = binding.chart
+                    val entries: MutableList<BarEntry> = mutableListOf()
+                    var link = ArrayList<String>()
+                    for (i in 0..it.data?.get(0)?.mostVisitedLink!!.size - 1) {
+                        entries.add(
+                            BarEntry(
+                                i.toFloat(),
+                                it.data.get(0).mostVisitedLink!!.get(i).urlid.toFloat()
+                            )
+                        )
+                        link.add(it.data.get(0).mostVisitedLink!!.get(i).urlshort)
+                    }
 
-                if (it.data?.get(0)?.mostVisitedLink!!.size < 6){
+                    if (it.data?.get(0)?.mostVisitedLink!!.size < 6) {
 //                    val rest = 6 - it.data?.get(0)?.mostVisitedLink!!.size
-                    for(i in it.data?.get(0)?.mostVisitedLink!!.size .. 5){
-                        entries.add(BarEntry((i).toFloat(), 0f))
-                        link.add("null")
+                        for (i in it.data?.get(0)?.mostVisitedLink!!.size..5) {
+                            entries.add(BarEntry((i).toFloat(), 0f))
+                            link.add("null")
+                        }
                     }
-                }
-                val barDataSet = BarDataSet(entries, "Page Views")
-                barDataSet.valueFormatter = DefaultValueFormatter(0)
-                val data = BarData(barDataSet)
-                val xAxis = chart.xAxis
-                val rightAxis = chart.axisRight
-                val leftAxis = chart.axisLeft
-                val description = chart.description
+                    val barDataSet = BarDataSet(entries, "Page Views")
+                    barDataSet.valueFormatter = DefaultValueFormatter(0)
+                    val data = BarData(barDataSet)
+                    val xAxis = chart.xAxis
+                    val rightAxis = chart.axisRight
+                    val leftAxis = chart.axisLeft
+                    val description = chart.description
 
-                val dateFormatter = AxisDateformatter(link)
-                chart.xAxis.valueFormatter = dateFormatter
-                xAxis.position = XAxis.XAxisPosition.BOTTOM
-                rightAxis.isEnabled = false
-                description.isEnabled = false
-                leftAxis.setDrawZeroLine(false)
-                rightAxis.setDrawZeroLine(false)
-                xAxis.setDrawGridLines(true)
-                xAxis.labelCount = 4
-                data.barWidth = 0.9f
-                chart.data = data
-                chart.setFitBars(true)
-                chart.invalidate()
+                    val dateFormatter = AxisDateformatter(link)
+                    chart.xAxis.valueFormatter = dateFormatter
+                    xAxis.position = XAxis.XAxisPosition.BOTTOM
+                    rightAxis.isEnabled = false
+                    description.isEnabled = false
+                    leftAxis.setDrawZeroLine(false)
+                    rightAxis.setDrawZeroLine(false)
+                    xAxis.setDrawGridLines(true)
+                    xAxis.labelCount = 4
+                    data.barWidth = 0.9f
+                    chart.data = data
+                    chart.setFitBars(true)
+                    chart.invalidate()
 
-                val pieChart = binding.chartUserDevice
-                val pieEntry: MutableList<PieEntry> = mutableListOf()
+                    val pieChart = binding.chartUserDevice
+                    val pieEntry: MutableList<PieEntry> = mutableListOf()
 
-                for(i in 0 .. it.data?.get(0)?.device!!.size - 1){
-                    pieEntry.add(PieEntry(it.data.get(0).device!!.get(i).urlid.toFloat(), it.data.get(0).device!!.get(i).device))
-                }
+                    for (i in 0..it.data?.get(0)?.device!!.size - 1) {
+                        pieEntry.add(
+                            PieEntry(
+                                it.data.get(0).device!!.get(i).urlid.toFloat(),
+                                it.data.get(0).device!!.get(i).device
+                            )
+                        )
+                    }
 
-                val pieSet = PieDataSet(pieEntry, "")
-                pieSet.setColors(intArrayOf(R.color.pieandroid, R.color.pieios, R.color.pieiospc, R.color.pieotherdevice, R.color.teal_200), requireContext())
-                pieSet.valueFormatter = DefaultValueFormatter(0)
-                val pieData = PieData(pieSet)
-                pieChart.description.isEnabled = false
-                pieChart.data = pieData
-                pieChart.invalidate()
+                    val pieSet = PieDataSet(pieEntry, "")
+                    pieSet.setColors(
+                        intArrayOf(
+                            R.color.pieandroid,
+                            R.color.pieios,
+                            R.color.pieiospc,
+                            R.color.pieotherdevice,
+                            R.color.teal_200
+                        ), requireContext()
+                    )
+                    pieSet.valueFormatter = DefaultValueFormatter(0)
+                    val pieData = PieData(pieSet)
+                    pieChart.description.isEnabled = false
+                    pieChart.data = pieData
+                    pieChart.invalidate()
 
-                val chartCountry = binding.chartCountry
-                val countrySet : MutableList<BarEntry> = mutableListOf()
-                var country = ArrayList<String>()
+                    val chartCountry = binding.chartCountry
+                    val countrySet: MutableList<BarEntry> = mutableListOf()
+                    var country = ArrayList<String>()
 
-                for(i in 0..it.data?.get(0)?.country!!.size - 1){
-                    countrySet.add(BarEntry(i.toFloat(), it.data.get(0).country!!.get(i).urlid.toFloat()))
-                    country.add(it.data.get(0).country!!.get(i).country)
-                }
+                    for (i in 0..it.data?.get(0)?.country!!.size - 1) {
+                        countrySet.add(
+                            BarEntry(
+                                i.toFloat(),
+                                it.data.get(0).country!!.get(i).urlid.toFloat()
+                            )
+                        )
+                        country.add(it.data.get(0).country!!.get(i).country)
+                    }
 
-                if (it.data?.get(0)?.country!!.size < 6){
+                    if (it.data?.get(0)?.country!!.size < 6) {
 //                    val rest = 6 - it.data?.get(0)?.mostVisitedLink!!.size
-                    for(i in it.data?.get(0)?.country!!.size .. 5){
-                        countrySet.add(BarEntry((i).toFloat(), 0f))
-                        country.add("null")
+                        for (i in it.data?.get(0)?.country!!.size..5) {
+                            countrySet.add(BarEntry((i).toFloat(), 0f))
+                            country.add("null")
+                        }
                     }
-                }
 
-                val countryDataSet = BarDataSet(countrySet, "Page Views")
-                countryDataSet.valueFormatter = DefaultValueFormatter(0)
-                val countryData = BarData(countryDataSet)
-                val countryXaxis = chartCountry.xAxis
-                val countryRightAxis = chartCountry.axisRight
-                val countryLeftAxis = chartCountry.axisLeft
-                val countryFormatter = AxisDateformatter(country)
-                chartCountry.xAxis.valueFormatter = countryFormatter
-                countryXaxis.position = XAxis.XAxisPosition.BOTTOM
-                countryRightAxis.isEnabled = false
-                chartCountry.description.isEnabled = false
-                countryLeftAxis.setDrawZeroLine(false)
-                countryRightAxis.setDrawZeroLine(false)
-                countryXaxis.labelCount = 4
-                countryData.barWidth = 0.9f
-                chartCountry.data = countryData
-                chartCountry.setFitBars(true)
-                chartCountry.invalidate()
+                    val countryDataSet = BarDataSet(countrySet, "Page Views")
+                    countryDataSet.valueFormatter = DefaultValueFormatter(0)
+                    val countryData = BarData(countryDataSet)
+                    val countryXaxis = chartCountry.xAxis
+                    val countryRightAxis = chartCountry.axisRight
+                    val countryLeftAxis = chartCountry.axisLeft
+                    val countryFormatter = AxisDateformatter(country)
+                    chartCountry.xAxis.valueFormatter = countryFormatter
+                    countryXaxis.position = XAxis.XAxisPosition.BOTTOM
+                    countryRightAxis.isEnabled = false
+                    chartCountry.description.isEnabled = false
+                    countryLeftAxis.setDrawZeroLine(false)
+                    countryRightAxis.setDrawZeroLine(false)
+                    countryXaxis.labelCount = 4
+                    countryData.barWidth = 0.9f
+                    chartCountry.data = countryData
+                    chartCountry.setFitBars(true)
+                    chartCountry.invalidate()
 
-                val chartCity = binding.chartCity
-                val citySet : MutableList<BarEntry> = mutableListOf()
-                var city = ArrayList<String>()
+                    val chartCity = binding.chartCity
+                    val citySet: MutableList<BarEntry> = mutableListOf()
+                    var city = ArrayList<String>()
 
-                for(i in 0..it.data?.get(0)?.city!!.size - 1){
-                    citySet.add(BarEntry(i.toFloat(), it.data.get(0).city!!.get(i).urlid.toFloat()))
-                    city.add(it.data.get(0).city!!.get(i).city)
-                }
+                    for (i in 0..it.data?.get(0)?.city!!.size - 1) {
+                        citySet.add(
+                            BarEntry(
+                                i.toFloat(),
+                                it.data.get(0).city!!.get(i).urlid.toFloat()
+                            )
+                        )
+                        city.add(it.data.get(0).city!!.get(i).city)
+                    }
 
-                if (it.data?.get(0)?.city!!.size < 6){
+                    if (it.data?.get(0)?.city!!.size < 6) {
 //                    val rest = 6 - it.data?.get(0)?.mostVisitedLink!!.size
-                    for(i in it.data?.get(0)?.city!!.size .. 5){
-                        citySet.add(BarEntry((i).toFloat(), 0f))
-                        city.add("null")
+                        for (i in it.data?.get(0)?.city!!.size..5) {
+                            citySet.add(BarEntry((i).toFloat(), 0f))
+                            city.add("null")
+                        }
                     }
-                }
 
-                val cityDataSet = BarDataSet(citySet, "Page Views")
-                cityDataSet.valueFormatter = DefaultValueFormatter(0)
-                val cityData = BarData(cityDataSet)
-                val cityXaxis = chartCity.xAxis
-                val cityRightAxis = chartCity.axisRight
-                val cityLeftAxis = chartCity.axisLeft
-                val cityFormatter = AxisDateformatter(city)
-                chartCity.xAxis.valueFormatter = cityFormatter
-                cityXaxis.position = XAxis.XAxisPosition.BOTTOM
-                cityRightAxis.isEnabled = false
-                chartCity.description.isEnabled = false
-                cityLeftAxis.setDrawZeroLine(false)
-                cityRightAxis.setDrawZeroLine(false)
-                cityXaxis.labelCount = 4
-                cityData.barWidth = 0.9f
-                chartCity.data = cityData
-                chartCity.setFitBars(true)
-                chartCity.invalidate()
+                    val cityDataSet = BarDataSet(citySet, "Page Views")
+                    cityDataSet.valueFormatter = DefaultValueFormatter(0)
+                    val cityData = BarData(cityDataSet)
+                    val cityXaxis = chartCity.xAxis
+                    val cityRightAxis = chartCity.axisRight
+                    val cityLeftAxis = chartCity.axisLeft
+                    val cityFormatter = AxisDateformatter(city)
+                    chartCity.xAxis.valueFormatter = cityFormatter
+                    cityXaxis.position = XAxis.XAxisPosition.BOTTOM
+                    cityRightAxis.isEnabled = false
+                    chartCity.description.isEnabled = false
+                    cityLeftAxis.setDrawZeroLine(false)
+                    cityRightAxis.setDrawZeroLine(false)
+                    cityXaxis.labelCount = 4
+                    cityData.barWidth = 0.9f
+                    chartCity.data = cityData
+                    chartCity.setFitBars(true)
+                    chartCity.invalidate()
 
-                val refererChart = binding.chartReferer
-                val refererEntry: MutableList<PieEntry> = mutableListOf()
+                    val refererChart = binding.chartReferer
+                    val refererEntry: MutableList<PieEntry> = mutableListOf()
 
-                for(i in 0 .. it.data?.get(0)?.referer!!.size - 1){
-                    refererEntry.add(PieEntry(it.data.get(0).referer!!.get(i).urlid.toFloat(), it.data.get(0).referer!!.get(i).referer))
-                }
-
-                val refererSet = PieDataSet(refererEntry, "")
-                val colorSet = mutableListOf(Color.rgb(193, 37, 82), Color.rgb(255, 102, 0), Color.rgb(245, 199, 0),
-                    Color.rgb(106, 150, 31), Color.rgb(179, 100, 53))
-                if(it.data?.get(0)?.referer!!.size > 5){
-                    for(i in 1 .. it.data?.get(0)?.referer!!.size - 5){
-                        val random = java.util.Random()
-                        val newColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256))
-                        colorSet.add(newColor)
-                        Log.i("Apakah Iterate", i.toString())
+                    for (i in 0..it.data?.get(0)?.referer!!.size - 1) {
+                        refererEntry.add(
+                            PieEntry(
+                                it.data.get(0).referer!!.get(i).urlid.toFloat(),
+                                it.data.get(0).referer!!.get(i).referer
+                            )
+                        )
                     }
-                    Log.i("Apakah Masuk", colorSet.get(5).toString())
-                }
+
+                    val refererSet = PieDataSet(refererEntry, "")
+                    val colorSet = mutableListOf(
+                        Color.rgb(193, 37, 82), Color.rgb(255, 102, 0), Color.rgb(245, 199, 0),
+                        Color.rgb(106, 150, 31), Color.rgb(179, 100, 53)
+                    )
+                    if (it.data?.get(0)?.referer!!.size > 5) {
+                        for (i in 1..it.data?.get(0)?.referer!!.size - 5) {
+                            val random = java.util.Random()
+                            val newColor = Color.rgb(
+                                random.nextInt(256),
+                                random.nextInt(256),
+                                random.nextInt(256)
+                            )
+                            colorSet.add(newColor)
+                            Log.i("Apakah Iterate", i.toString())
+                        }
+                        Log.i("Apakah Masuk", colorSet.get(5).toString())
+                    }
 //                refererSet.xValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
 //                refererSet.yValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
-                refererSet.setColors(colorSet)
-                refererSet.valueFormatter = DefaultValueFormatter(0)
-                val refererData = PieData(refererSet)
-                refererChart.minAngleForSlices = 20f
-                refererChart.legend.isWordWrapEnabled = true
-                refererChart.legend.orientation = Legend.LegendOrientation.HORIZONTAL
-                refererChart.description.isEnabled = false
-                refererChart.data = refererData
+                    refererSet.setColors(colorSet)
+                    refererSet.valueFormatter = DefaultValueFormatter(0)
+                    val refererData = PieData(refererSet)
+                    refererChart.minAngleForSlices = 20f
+                    refererChart.legend.isWordWrapEnabled = true
+                    refererChart.legend.orientation = Legend.LegendOrientation.HORIZONTAL
+                    refererChart.description.isEnabled = false
+                    refererChart.data = refererData
 
-                refererChart.setOnChartValueSelectedListener(this)
-                refererChart.invalidate()
-                Log.i("Dashboard Data", citySet.toString())
+                    refererChart.setOnChartValueSelectedListener(this)
+                    refererChart.invalidate()
+
+                    val subsGrowthChart = binding.chartSubsGrowth
+                    val subsSet: MutableList<Entry> = mutableListOf()
+                    val month = ArrayList<String>()
+
+                    for(i in 0 .. it.data.get(0).subsGrowth!!.size - 1){
+                        subsSet.add(Entry(i.toFloat(), it.data.get(0).subsGrowth!!.get(i).subsData.toFloat()))
+                        month.add(it.data.get(0).subsGrowth!!.get(i).month)
+                    }
+
+                    val subsGrowthSet = LineDataSet(subsSet, "Subscriber Growth")
+                    subsGrowthSet.valueFormatter = DefaultValueFormatter(0)
+                    subsGrowthSet.setColors(R.color.pieandroid)
+                    subsGrowthSet.circleRadius = 5f
+                    subsGrowthSet.setCircleColor(R.color.pieandroid)
+
+                    val dateFormatterSubs = AxisDateformatter(month)
+                    subsGrowthChart.xAxis.valueFormatter = dateFormatterSubs
+
+                    subsGrowthChart.description.isEnabled = false
+                    subsGrowthChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+                    subsGrowthChart.xAxis.labelRotationAngle = 20f
+                    subsGrowthChart.data = LineData(subsGrowthSet)
+                    subsGrowthChart.animateXY(100, 500)
+                    Log.i("Dashboard Data", citySet.toString())
+                }
             }
         }
     }

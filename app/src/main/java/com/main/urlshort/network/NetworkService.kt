@@ -57,7 +57,7 @@ interface NetworkService{
     suspend fun addLib(@Field("back_half") backhalf: String, @Field("created_by") createdBy: String, @Field("account_type") accountType: String): Respond
 
     @GET("api/dashboard")
-    suspend fun getdatadashboard(@Query("userid") userid: String): Respond
+    suspend fun getdatadashboard(@Query("userid") userid: String, @Query("account_type") accountType: String): Respond
 
     @FormUrlEncoded
     @POST("api/signup/authgoogle")
