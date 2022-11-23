@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -77,10 +78,17 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
         }
 
         viewModel.delete.observe(viewLifecycleOwner){
+            Log.i("Lib Data Sisa", it.toString())
             if(it?.data?.get(0)?.msg != null){
                 viewModel.getLibData(userid)
-                val respond = viewModel.respond.value
-                adapter.data = respond?.data!!
+                viewModel.respond.observe(viewLifecycleOwner){
+                    adapter.data = it!!.data!!
+                    adapter.notifyDataSetChanged()
+                }
+//                val respond = viewModel.respond.value
+//                adapter.data = respond?.data!!
+//                adapter.notifyDataSetChanged()
+//                Utils.showToast(requireContext(), "This Delete Runs")
             }
 
             if(it?.error?.get(0)?.errorMsg != null){
@@ -110,8 +118,8 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
 
     private fun createLib(backHalf: String, createdBy: String, tilBackHalf: TextInputLayout, bottomSheetExtension: BottomSheetExtension){
         viewModel.respond.removeObservers(viewLifecycleOwner)
-
-        viewModel.createLib("smrt.link/${backHalf}", createdBy)
+        val accountType = sharedPreferences.getString("accountType", null)
+        viewModel.createLib("smrt.link/${backHalf}", createdBy, accountType.toString())
 
         viewModel.respond.observe(viewLifecycleOwner){
             Log.i("Respond Create Lib", it.toString())
@@ -134,6 +142,10 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
                 viewModel.respond.observe(viewLifecycleOwner){
                     adapter.data = it?.data!!
                 }
+                adapter.notifyDataSetChanged()
+                bottomSheetExtension.dialog.dismiss()
+            } else if(it?.error?.get(0)?.errorMsg != null){
+                Toast.makeText(requireContext(), it?.error?.get(0)?.errorMsg.toString(), Toast.LENGTH_LONG).show()
                 adapter.notifyDataSetChanged()
                 bottomSheetExtension.dialog.dismiss()
             } else {
@@ -185,6 +197,7 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
                 if(i == 0){
                     findNavController().navigate(LibListFragmentDirections.actionLibListFragmentToLibEditFragment(shortUrl))
                 } else {
+                    Utils.showToast(requireContext(), "Option Delete Selected")
                     viewModel.delete.removeObservers(requireActivity())
                     viewModel.deleteLib(userid, shortUrl)
                 }

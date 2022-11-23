@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -55,6 +56,7 @@ class LinkDetailFragment : Fragment() {
     private lateinit var edit: ImageView
     private lateinit var save: ImageView
     private lateinit var sharedPreferences: SharedPreferences
+    private var defaultUrlShort = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +76,7 @@ class LinkDetailFragment : Fragment() {
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
 //        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fabAddLink)
         val args = LinkDetailFragmentArgs.fromBundle(requireArguments())
+        defaultUrlShort = args.urlshort
         customActionBar = (requireActivity() as AppCompatActivity).supportActionBar?.customView!!
         edit = customActionBar.findViewById(R.id.imgEdit)
         save = customActionBar.findViewById(R.id.imgSave)
@@ -131,6 +134,13 @@ class LinkDetailFragment : Fragment() {
     private fun editLink(){
         val title = customActionBar.findViewById<TextView>(R.id.tvTitleCustom)
         title.text = "Edit"
+        val constraint = binding.clLinkDetail
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(constraint)
+        constraintSet.connect(binding.btnDeleteLink.id, ConstraintSet.TOP, binding.etBackHalf.id, ConstraintSet.BOTTOM, 16)
+        constraintSet.applyTo(constraint)
+        val accountType = sharedPreferences.getString("accountType", null)
+        if (accountType == "free") binding.etBackHalf.isEnabled = false else binding.etBackHalf.isEnabled = true
         edit.visibility = View.GONE
         save.visibility = View.VISIBLE
         binding.materialButton2.visibility = View.GONE
@@ -144,10 +154,12 @@ class LinkDetailFragment : Fragment() {
         viewModel.respond.removeObservers(viewLifecycleOwner)
 
         val title = binding.etTitleEdit.text.toString()
-        val backHalf = binding.etBackHalf.text.toString()
+        val accountType = sharedPreferences.getString("accountType", null)
+        val backHalf = if(accountType == "free") defaultUrlShort else binding.etBackHalf.text.toString()
         val userid = sharedPreferences.getString("userid", null)
 
-        viewModel.editLink(urlid, title, backHalf, userid.toString())
+
+        viewModel.editLink(urlid, title, backHalf, userid.toString(), accountType.toString())
 
         viewModel.respond.observe(viewLifecycleOwner){
 

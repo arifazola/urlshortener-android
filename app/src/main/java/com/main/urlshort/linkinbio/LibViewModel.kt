@@ -59,10 +59,10 @@ class LibViewModel: ViewModel() {
         resetValue()
     }
 
-    fun createLib(backHalf: String, createdBy: String){
+    fun createLib(backHalf: String, createdBy: String, accountType: String){
         viewModelScope.launch {
             try {
-                val addLib = UrlShortService.networkService.addLib(backHalf, createdBy)
+                val addLib = UrlShortService.networkService.addLib(backHalf, createdBy, accountType)
                 _respond.value = addLib
             }catch (e: Exception){
                 Log.e("Add Lib Exception", e.message.toString())

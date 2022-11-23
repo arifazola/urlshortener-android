@@ -7,7 +7,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
 import retrofit2.http.*
 
-private val URL = "http://192.168.1.7:8080/"
+private val URL = "https://shrlnk.my.id"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -31,14 +31,14 @@ interface NetworkService{
 
     @FormUrlEncoded
     @PUT("/api/links/edit")
-    suspend fun editLink(@Field("url_id") urlid: String, @Field("title") title: String, @Field("back_half") backhalf: String, @Field("userid") userid: String): Respond
+    suspend fun editLink(@Field("url_id") urlid: String, @Field("title") title: String, @Field("back_half") backhalf: String, @Field("userid") userid: String, @Field("account_type") accountType: String): Respond
 
     @GET("api/links/getstats")
     suspend fun getStats(@Query("url_short") urlshort: String): List<StatsData>
 
     @FormUrlEncoded
     @POST("api/links/short")
-    suspend fun shortURL(@Field("org_url") orgURL: String, @Field("input_custom") inputCustom: String, @Field("created_by") createdBy: String): Respond
+    suspend fun shortURL(@Field("org_url") orgURL: String, @Field("input_custom") inputCustom: String, @Field("created_by") createdBy: String, @Field("account_type") accountType: String): Respond
 
     @GET("api/linkinbio/data")
     suspend fun getLib(@Query("user_id") userid: String) : Respond
@@ -54,7 +54,7 @@ interface NetworkService{
 
     @FormUrlEncoded
     @POST("api/linkinbio/create")
-    suspend fun addLib(@Field("back_half") backhalf: String, @Field("created_by") createdBy: String): Respond
+    suspend fun addLib(@Field("back_half") backhalf: String, @Field("created_by") createdBy: String, @Field("account_type") accountType: String): Respond
 
     @GET("api/dashboard")
     suspend fun getdatadashboard(@Query("userid") userid: String): Respond

@@ -20,10 +20,10 @@ class LinkDetailViewModel: ViewModel() {
     val stats : LiveData<List<StatsData>>
     get() = _stats
 
-    fun editLink(urlid: String, title: String, backhalf: String, userid: String){
+    fun editLink(urlid: String, title: String, backhalf: String, userid: String, accountType: String){
         viewModelScope.launch {
             try {
-                val editLink = UrlShortService.networkService.editLink(urlid, title, backhalf, userid)
+                val editLink = UrlShortService.networkService.editLink(urlid, title, backhalf, userid, accountType)
                 _respond.value = editLink
             }catch (e: Exception){
                 Log.e("Edit Link Exception", e.message.toString())

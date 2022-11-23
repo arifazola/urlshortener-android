@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -72,8 +73,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             true,
             layoutInflater
         )
+
         val close = bottomSheetView.findViewById<Button>(R.id.btnCloseAdd)
         val shorten = bottomSheetView.findViewById<Button>(R.id.btnShorten)
+        val inputCustom = bottomSheetView.findViewById<TextInputLayout>(R.id.tilbackhalf)
+        val accountType = sharedPreferences.getString("accountType", null)
+        if(accountType == "free"){
+            inputCustom.isEnabled = false
+            inputCustom.isErrorEnabled = true
+            inputCustom.error = "Custom back-half is not available for Free Users. Please Upgrade your account"
+        } else {
+            inputCustom.isEnabled = true
+            inputCustom.isErrorEnabled = false
+        }
 
         close.setOnClickListener {
             bottomSheet.dialog.dismiss()
@@ -87,14 +99,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             viewModel.shortUrl(
                 orgUrl.editText?.text.toString(),
                 inputCustom.editText?.text.toString(),
-                createdBy!!
+                createdBy!!,
+                accountType.toString()
             )
 
             viewModel.respond.observe(this) {
                 Log.i("Short URL Data", it.toString())
                 if (it?.error?.get(0)?.orgUrl != null) {
                     orgUrl.isErrorEnabled = true
-                    orgUrl.error = it.error?.get(0)?.orgUrl
+                    orgUrl.error = it.error.get(0).orgUrl!!
                 } else {
                     orgUrl.isErrorEnabled = false
                 }
@@ -104,6 +117,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     inputCustom.error = it.error?.get(0)?.inputCustom
                 } else {
                     inputCustom.isErrorEnabled = true
+                }
+
+                if (it?.error?.get(0)?.errorMsg != null) {
+                    Toast.makeText(this, it.error?.get(0)?.errorMsg, Toast.LENGTH_LONG).show()
                 }
 
                 if (it?.data?.get(0)?.msg == "Duplicate") {

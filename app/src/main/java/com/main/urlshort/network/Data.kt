@@ -18,6 +18,7 @@ data class DataContent(
      val userid: String?,
      val fullname: String?,
      val email: String?,
+     val accountType: String?,
      @Json(name = "url_id") val urlID: String?,
      @Json(name = "url_short") val urlShort: String?,
      @Json(name = "org_url") val orgUrl: String?,
