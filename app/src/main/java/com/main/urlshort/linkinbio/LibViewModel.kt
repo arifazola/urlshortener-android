@@ -19,6 +19,10 @@ class LibViewModel: ViewModel() {
     val setting: LiveData<Respond>
     get() = _setting
 
+    private val _create = MutableLiveData<Respond?>()
+    val create: LiveData<Respond?>
+        get() = _create
+
     private val _delete = MutableLiveData<Respond?>()
     val delete: LiveData<Respond?>
         get() = _delete
@@ -63,12 +67,12 @@ class LibViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val addLib = UrlShortService.networkService.addLib(backHalf, createdBy, accountType)
-                _respond.value = addLib
+                _create.value = addLib
             }catch (e: Exception){
                 Log.e("Add Lib Exception", e.message.toString())
             }
         }
-        resetValue()
+        resetCreate()
     }
 
     fun deleteLib(userid: String, urlShort: String){
@@ -89,5 +93,9 @@ class LibViewModel: ViewModel() {
 
     private fun resetDelete(){
         _delete.value = null
+    }
+
+    private fun resetCreate(){
+        _create.value = null
     }
 }

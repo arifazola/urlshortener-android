@@ -79,11 +79,12 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
 
         viewModel.delete.observe(viewLifecycleOwner){
             Log.i("Lib Data Sisa", it.toString())
+            viewModel.getLibData(userid)
             if(it?.data?.get(0)?.msg != null){
-                viewModel.getLibData(userid)
                 viewModel.respond.observe(viewLifecycleOwner){
-                    adapter.data = it!!.data!!
-                    adapter.notifyDataSetChanged()
+//                    adapter.data = it!!.data!!
+//                    adapter.notifyDataSetChanged()
+                    Log.i("Lib Data After Delete", it.toString())
                 }
 //                val respond = viewModel.respond.value
 //                adapter.data = respond?.data!!
@@ -117,11 +118,11 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
     }
 
     private fun createLib(backHalf: String, createdBy: String, tilBackHalf: TextInputLayout, bottomSheetExtension: BottomSheetExtension){
-        viewModel.respond.removeObservers(viewLifecycleOwner)
+        viewModel.create.removeObservers(viewLifecycleOwner)
         val accountType = sharedPreferences.getString("accountType", null)
         viewModel.createLib("smrt.link/${backHalf}", createdBy, accountType.toString())
 
-        viewModel.respond.observe(viewLifecycleOwner){
+        viewModel.create.observe(viewLifecycleOwner){
             Log.i("Respond Create Lib", it.toString())
 
             if(it?.data?.get(0)?.duplicate != null){
@@ -144,8 +145,13 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
                 }
                 adapter.notifyDataSetChanged()
                 bottomSheetExtension.dialog.dismiss()
-            } else if(it?.error?.get(0)?.errorMsg != null){
-                Toast.makeText(requireContext(), it?.error?.get(0)?.errorMsg.toString(), Toast.LENGTH_LONG).show()
+            } else if(it?.error?.get(0)?.limitLib != null){
+                Toast.makeText(requireContext(), it?.error?.get(0)?.limitLib.toString(), Toast.LENGTH_LONG).show()
+                viewModel.getLibData(userid.toString())
+
+                viewModel.respond.observe(viewLifecycleOwner){
+                    adapter.data = it?.data!!
+                }
                 adapter.notifyDataSetChanged()
                 bottomSheetExtension.dialog.dismiss()
             } else {

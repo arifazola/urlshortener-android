@@ -65,6 +65,7 @@ data class ErrorMsg(
     val bio: String?,
     @Json(name = "button_color") val buttoncolor: String?,
     @Json(name = "text_color") val text: String?,
+    @Json(name = "limit_lib") val limitLib: String?
 )
 
 data class StatsData(
