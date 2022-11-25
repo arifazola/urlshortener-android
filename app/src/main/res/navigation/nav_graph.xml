@@ -76,4 +76,8 @@
             android:id="@+id/action_libListFragment_to_libEditFragment"
             app:destination="@id/libEditFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/performanceFragment"
+        android:name="com.main.urlshort.performance.PerformanceFragment"
+        android:label="PerformanceFragment" />
 </navigation>

@@ -44,7 +44,10 @@ data class DataContent(
      val country: List<Country>?,
      val city: List<City>?,
      val referer: List<Referer>?,
-     @Json(name = "subs_growth") val subsGrowth: List<SubsGrowth>?
+     @Json(name = "subs_growth") val subsGrowth: List<SubsGrowth>?,
+     @Json(name = "total_link") val totalLink: String?,
+     @Json(name = "total_lib") val totalLib: String?,
+     @Json(name = "total_subs") val totalSubs: String?,
 )
 
 data class ErrorMsg(

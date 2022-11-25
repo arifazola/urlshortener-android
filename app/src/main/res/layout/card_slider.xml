@@ -5,9 +5,10 @@
     android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvSliders"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        app:cardBackgroundColor="#17A2B8"
+        app:cardBackgroundColor="@color/sliderone"
         app:cardCornerRadius="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,6 +38,43 @@
                 android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="@+id/tvTotal"
                 app:layout_constraintTop_toBottomOf="@+id/tvTotal" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvMoreInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#1591A5"
+                app:cardCornerRadius="0dp"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tvMoreInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="More Info"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/imageView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tvMoreInfo"
+                        app:layout_constraintStart_toEndOf="@+id/tvMoreInfo"
+                        app:layout_constraintTop_toTopOf="@+id/tvMoreInfo"
+                        app:srcCompat="@drawable/ic_baseline_arrow_circle_right_24" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

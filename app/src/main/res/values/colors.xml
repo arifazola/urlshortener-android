@@ -14,4 +14,8 @@
     <color name="pieios">#36A2EB</color>
     <color name="pieiospc">#FFCD56</color>
     <color name="pieotherdevice">#FF6217</color>
+    <color name="sliderone">#17A2B8</color>
+    <color name="slidertwo">#28A745</color>
+    <color name="sliderthree">#FFC107</color>
+    <color name="moreinfoone">#1591A5</color>
 </resources>

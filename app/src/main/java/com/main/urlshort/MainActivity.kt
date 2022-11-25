@@ -159,6 +159,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 findNavController(R.id.nav_host_fragment).navigate(R.id.libListFragment)
                 return true
             }
+            R.id.nav_performance -> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.performanceFragment)
+                return true
+            }
             R.id.nav_signout -> {
                 val googleAuth = GoogleAuth(this)
 //                googleAuth.initialize(this)

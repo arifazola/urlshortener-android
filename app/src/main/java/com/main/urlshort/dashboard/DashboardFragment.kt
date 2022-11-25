@@ -6,20 +6,20 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import com.main.urlshort.R
-import com.main.urlshort.SHARED_PREF_KEY
-import com.main.urlshort.SlidersAdapter
-import com.main.urlshort.Utils
+import com.main.urlshort.*
 import com.main.urlshort.databinding.FragmentDashboardBinding
 import com.main.urlshort.linkdetail.AxisDateformatter
+import com.main.urlshort.network.DataContent
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,7 +31,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [DashboardFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class DashboardFragment : Fragment(), OnChartValueSelectedListener {
+class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreInfo {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -59,9 +59,9 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener {
             requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val userid = sharedPreferences.getString("userid", null)
 
-        val dataSliders = arrayListOf<String>("10", "20", "30", "40")
-        val adapter = SlidersAdapter(dataSliders)
-        binding.viewPager.adapter = adapter
+//        val dataSliders = arrayListOf<String>("10", "20", "30", "40")
+//        val adapter = SlidersAdapter(dataSliders)
+//        binding.viewPager.adapter = adapter
 
 //        viewModel.getdata(userid!!)
 //
@@ -70,6 +70,11 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener {
 //        }
 
         setMostVisitedLinkChart(userid!!)
+
+//        binding.svParent.setOnScrollChangeListener { view, i, i2, i3, i4 ->
+//            Log.i("Scroll Info", binding.svParent.scrollX.toString())
+//            Log.i("Scroll Info", binding.svParent.scrollY.toString())
+//        }
         return binding.root
     }
 
@@ -99,6 +104,7 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener {
                 Log.e("Dashboard Data", it.toString())
                 if (it.error != null) {
                     binding.clAlertTop.visibility = View.VISIBLE
+                    binding.clSliders.visibility = View.GONE
                     binding.chart.visibility = View.GONE
                     binding.chartUserDevice.visibility = View.GONE
                     binding.chartCountry.visibility = View.GONE
@@ -111,8 +117,15 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener {
                     binding.animationView4.visibility = View.VISIBLE
                     binding.animationView5.visibility = View.VISIBLE
                     binding.animationView6.visibility = View.VISIBLE
+
+                    val constraintLayout = binding.clParent
+                    val constraintSet = ConstraintSet()
+                    constraintSet.clone(constraintLayout)
+                    constraintSet.connect(binding.clMostVisitedLink.id, ConstraintSet.TOP, binding.clAlertTop.id, ConstraintSet.BOTTOM, 8)
+                    constraintSet.applyTo(constraintLayout)
                 } else {
                     binding.clAlertTop.visibility = View.GONE
+                    binding.clSliders.visibility = View.VISIBLE
                     binding.chart.visibility = View.VISIBLE
                     binding.chartUserDevice.visibility = View.VISIBLE
                     binding.chartCountry.visibility = View.VISIBLE
@@ -346,6 +359,11 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener {
                     subsGrowthChart.animateXY(100, 500)
                     Log.i("Dashboard Data", citySet.toString())
                 }
+
+                val dataSliders = arrayListOf<String>(it.data!!.get(0).totalLink!!, it.data!!.get(0).totalLib!!, it.data!!.get(0).totalSubs!!)
+                val adapter = SlidersAdapter(dataSliders)
+                adapter.onClickMoreInfo = this
+                binding.viewPager.adapter = adapter
             }
         }
     }
@@ -357,5 +375,15 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener {
 
     override fun onNothingSelected() {
         binding.chartReferer.centerText = ""
+    }
+
+    override fun onClickListener(position: Int) {
+        if(position == 0){
+            findNavController().navigate(R.id.linksFragment)
+        } else if(position == 1){
+            findNavController().navigate(R.id.libListFragment)
+        } else {
+            binding.svParent.smoothScrollTo(0, binding.clSubsGrowth.y.toInt())
+        }
     }
 }
