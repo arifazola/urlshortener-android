@@ -37,4 +37,8 @@ object Utils {
         val newFormat = SimpleDateFormat(newFormat).format(tomil)
         return newFormat
     }
+
+    fun milsToDate(mils: Long, format: String): String{
+        return SimpleDateFormat(format).format(mils)
+    }
 }
