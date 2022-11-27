@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -15,16 +16,13 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputLayout
 import com.main.urlshort.databinding.ActivityMainBinding
@@ -42,7 +40,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         sharedPreferences = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         appBarConfig = AppBarConfiguration(
-            setOf(R.id.dashboardFragment, R.id.linksFragment, R.id.libListFragment),
+            setOf(R.id.dashboardFragment, R.id.linksFragment, R.id.libListFragment, R.id.performanceFragment),
             binding.drawerLayout
         )
         val colorDrawable = ColorDrawable(Color.parseColor("#FFFFFF"))
@@ -148,19 +146,100 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         Log.i("Nav Selected", "Selected")
         when (item.itemId) {
             R.id.nav_home -> {
+//                drawer.closeDrawers()
                 findNavController(R.id.nav_host_fragment).navigate(R.id.dashboardFragment)
+                Handler().post { drawer.closeDrawers() }
+//                drawer.addDrawerListener(object : DrawerListener{
+//                    override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+//
+//                    }
+//
+//                    override fun onDrawerOpened(drawerView: View) {
+//
+//                    }
+//
+//                    override fun onDrawerClosed(drawerView: View) {
+//                        findNavController(R.id.nav_host_fragment).navigate(R.id.dashboardFragment)
+//                    }
+//
+//                    override fun onDrawerStateChanged(newState: Int) {
+//
+//                    }
+//
+//                })
                 return true
+
             }
             R.id.nav_link -> {
+//                drawer.closeDrawers()
                 findNavController(R.id.nav_host_fragment).navigate(R.id.linksFragment)
+                Handler().post { drawer.closeDrawers() }
+//                drawer.addDrawerListener(object : DrawerListener{
+//                    override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+//
+//                    }
+//
+//                    override fun onDrawerOpened(drawerView: View) {
+//
+//                    }
+//
+//                    override fun onDrawerClosed(drawerView: View) {
+//                        findNavController(R.id.nav_host_fragment).navigate(R.id.linksFragment)
+//                    }
+//
+//                    override fun onDrawerStateChanged(newState: Int) {
+//
+//                    }
+//
+//                })
                 return true
             }
             R.id.nav_lib -> {
+//                drawer.closeDrawers()
                 findNavController(R.id.nav_host_fragment).navigate(R.id.libListFragment)
+                Handler().post { drawer.closeDrawers() }
+//                drawer.addDrawerListener(object : DrawerListener{
+//                    override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+//
+//                    }
+//
+//                    override fun onDrawerOpened(drawerView: View) {
+//
+//                    }
+//
+//                    override fun onDrawerClosed(drawerView: View) {
+//                        findNavController(R.id.nav_host_fragment).navigate(R.id.libListFragment)
+//                    }
+//
+//                    override fun onDrawerStateChanged(newState: Int) {
+//
+//                    }
+//
+//                })
                 return true
             }
             R.id.nav_performance -> {
+//                drawer.closeDrawers()
                 findNavController(R.id.nav_host_fragment).navigate(R.id.performanceFragment)
+                Handler().post { drawer.closeDrawers() }
+//                drawer.addDrawerListener(object : DrawerListener{
+//                    override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+//
+//                    }
+//
+//                    override fun onDrawerOpened(drawerView: View) {
+//
+//                    }
+//
+//                    override fun onDrawerClosed(drawerView: View) {
+//                        findNavController(R.id.nav_host_fragment).navigate(R.id.performanceFragment)
+//                    }
+//
+//                    override fun onDrawerStateChanged(newState: Int) {
+//
+//                    }
+//
+//                })
                 return true
             }
             R.id.nav_signout -> {

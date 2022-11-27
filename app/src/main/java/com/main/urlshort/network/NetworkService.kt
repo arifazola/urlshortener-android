@@ -68,6 +68,12 @@ interface NetworkService{
 
     @DELETE("api/lib/delete/{userid}/{shortUrl}")
     suspend fun deleteLib(@Path("userid") userid: String, @Path("shortUrl") shortUrl: String): Respond
+
+    @GET("api/performance/getlinklist")
+    suspend fun getLinkList(@Query("user_id") userid: String): Respond
+
+    @GET("api/performance/getdata")
+    suspend fun getData(@Query("links") links: String, @Query("date_start") dateStart: String, @Query("date_end") dateEnd: String, @Query("user_id") userid: String, @Query("account_type") accountType: String): Respond
 }
 
 object UrlShortService{

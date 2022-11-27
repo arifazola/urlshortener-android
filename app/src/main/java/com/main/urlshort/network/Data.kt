@@ -48,6 +48,7 @@ data class DataContent(
      @Json(name = "total_link") val totalLink: String?,
      @Json(name = "total_lib") val totalLib: String?,
      @Json(name = "total_subs") val totalSubs: String?,
+     @Json(name = "links_list") val linkList: List<LinksList>?
 )
 
 data class ErrorMsg(
@@ -112,4 +113,8 @@ data class Referer(
 data class SubsGrowth(
     val month: String,
     @Json(name = "subs_data") val subsData: String
+)
+
+data class LinksList(
+    @Json(name = "url_short") val urlShort: String
 )

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.tabs.TabLayout
 import com.main.urlshort.R
 import com.main.urlshort.databinding.FragmentLinksBinding
@@ -40,6 +41,8 @@ class LinksFragment : Fragment(), TabLayout.OnTabSelectedListener {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+//        val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawerLayout)
+//        drawer.closeDrawers()
         binding = FragmentLinksBinding.inflate(inflater)
         setupTablayout()
         setupAdapter()
