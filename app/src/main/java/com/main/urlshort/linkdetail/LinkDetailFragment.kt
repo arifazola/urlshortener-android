@@ -57,6 +57,7 @@ class LinkDetailFragment : Fragment() {
     private lateinit var save: ImageView
     private lateinit var sharedPreferences: SharedPreferences
     private var defaultUrlShort = ""
+    private var token = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +75,7 @@ class LinkDetailFragment : Fragment() {
         binding = FragmentLinkDetailBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(LinkDetailViewModel::class.java)
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
+        token = sharedPreferences.getString("token", null).toString()
 //        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fabAddLink)
         val args = LinkDetailFragmentArgs.fromBundle(requireArguments())
         defaultUrlShort = args.urlshort
@@ -113,12 +115,17 @@ class LinkDetailFragment : Fragment() {
 
     private fun deleteLink(userid: String, urlshort: String){
         viewModel.respond.removeObservers(viewLifecycleOwner)
-        viewModel.deleteLink(userid, urlshort)
+        viewModel.deleteLink(userid, urlshort, token)
 
         viewModel.respond.observe(viewLifecycleOwner){
 
+            Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
             if(it?.error?.get(0)?.errorMsg != null){
                 Utils.showToast(requireContext(), it.error.get(0).errorMsg.toString())
+            }
+
+            if(it?.error?.get(0)?.invalidToken != null){
+                Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
             }
 
             if(it?.data?.get(0)?.msg != null){
@@ -159,9 +166,11 @@ class LinkDetailFragment : Fragment() {
         val userid = sharedPreferences.getString("userid", null)
 
 
-        viewModel.editLink(urlid, title, backHalf, userid.toString(), accountType.toString())
+        viewModel.editLink(urlid, title, backHalf, userid.toString(), accountType.toString(), token)
 
         viewModel.respond.observe(viewLifecycleOwner){
+            Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
+            token = it?.token.toString()
 
             if(it?.error?.get(0)?.errorMsg == "Unauthorized"){
                 Toast.makeText(requireContext(), "Trying to access unauthorized property. If this is a mistake, reopen the page.", Toast.LENGTH_LONG).show()
@@ -169,6 +178,10 @@ class LinkDetailFragment : Fragment() {
 
             if(it?.error?.get(0)?.title != null){
                 binding.etTitleEdit.error = it.error.get(0).title
+            }
+
+            if(it?.error?.get(0)?.invalidToken != null){
+                Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
             }
 
             if(it?.error?.get(0)?.backHalf != null){

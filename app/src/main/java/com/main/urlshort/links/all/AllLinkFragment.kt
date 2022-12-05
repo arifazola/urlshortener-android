@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.main.urlshort.R
 import com.main.urlshort.SHARED_PREF_KEY
+import com.main.urlshort.Utils
 import com.main.urlshort.databinding.FragmentAllLinkBinding
 import com.main.urlshort.links.LinksFragmentDirections
 import com.main.urlshort.network.Respond
@@ -51,17 +52,20 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         viewModel = ViewModelProvider(this).get(AllLinksViewModel::class.java)
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val userid = sharedPreferences.getString("userid", null)
-        Log.i("User ID", userid!!)
-        viewModel.getData(userid!!)
+        val token = sharedPreferences.getString("token", null)
+        viewModel.getData(userid.toString(), token.toString())
         val adapter = AllLinksAdapter()
         adapter.onLinkSelected = this
         binding.rvLinks.adapter = adapter
 
         viewModel.respond.observe(viewLifecycleOwner){
-            Log.i("All Links Data", it.toString())
-            Log.i("All Links Data count", it.data!!.size.toString())
-            adapter.data = it.data
-            binding.tvTotalLinks.text = it.data.size.toString()
+            Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
+            if(it.error?.get(0)?.invalidToken != null){
+                Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
+            } else {
+                adapter.data = it.data!!
+                binding.tvTotalLinks.text = it.data.size.toString()
+            }
         }
 
 

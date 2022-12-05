@@ -72,9 +72,10 @@ class LoginFragment : Fragment() {
                 if(it == true){
                     val data = viewModel.respond.value
                     Utils.sharedPreferenceString(sharedPreferences, "userid", data!!.data!!.get(0).userid!!)
-                    Utils.sharedPreferenceString(sharedPreferences, "fullname", data!!.data!!.get(0).fullname!!)
-                    Utils.sharedPreferenceString(sharedPreferences, "email", data!!.data!!.get(0).email!!)
-                    Utils.sharedPreferenceString(sharedPreferences, "accountType", data!!.data!!.get(0).accountType!!)
+                    Utils.sharedPreferenceString(sharedPreferences, "fullname", data.data!!.get(0).fullname!!)
+                    Utils.sharedPreferenceString(sharedPreferences, "email", data.data.get(0).email!!)
+                    Utils.sharedPreferenceString(sharedPreferences, "accountType", data.data.get(0).accountType!!)
+                    Utils.sharedPreferenceString(sharedPreferences, "token", data.token.toString())
 
                     val intent = Intent(requireContext(), MainActivity::class.java)
                     requireActivity().finish()

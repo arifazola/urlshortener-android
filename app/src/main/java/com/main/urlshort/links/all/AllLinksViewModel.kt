@@ -15,10 +15,12 @@ class AllLinksViewModel: ViewModel() {
     val respond: LiveData<Respond>
     get() = _respond
 
-    fun getData(userid: String){
+    fun getData(userid: String, token: String){
         viewModelScope.launch {
+//            val getData = UrlShortService.networkService.getAllLinks(userid, token)
+//            _respond.value = getData
             try {
-                val getData = UrlShortService.networkService.getAllLinks(userid)
+                val getData = UrlShortService.networkService.getAllLinks(userid, token)
                 _respond.value = getData
             }catch (e: Exception){
                 Log.e("AllLinksException", e.message.toString())

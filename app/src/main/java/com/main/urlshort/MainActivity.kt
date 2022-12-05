@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var appBarConfig: AppBarConfiguration
     private lateinit var viewModel: MainViewModel
     private lateinit var sharedPreferences: SharedPreferences
+    private var token = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -94,15 +95,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val orgUrl = bottomSheetView.findViewById<TextInputLayout>(R.id.tilDestinationUrl)
             val inputCustom = bottomSheetView.findViewById<TextInputLayout>(R.id.tilbackhalf)
             val createdBy = sharedPreferences.getString("userid", null)
+            token = sharedPreferences.getString("token", null).toString()
             viewModel.shortUrl(
                 orgUrl.editText?.text.toString(),
                 inputCustom.editText?.text.toString(),
                 createdBy!!,
-                accountType.toString()
+                accountType.toString(),
+                token
             )
 
             viewModel.respond.observe(this) {
                 Log.i("Short URL Data", it.toString())
+                Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
+                token = it?.token.toString()
                 if (it?.error?.get(0)?.orgUrl != null) {
                     orgUrl.isErrorEnabled = true
                     orgUrl.error = it.error.get(0).orgUrl!!
@@ -132,6 +137,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 if (it?.data?.get(0)?.msg == false) {
                     Utils.showToast(this, "Server Error. Please try again")
+                }
+
+                if(it?.error?.get(0)?.invalidToken != null){
+                    Utils.showToast(this, it.error.get(0).invalidToken.toString())
                 }
             }
         }

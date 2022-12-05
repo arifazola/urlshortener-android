@@ -79,8 +79,9 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
     }
 
     private fun setMostVisitedLinkChart(userid: String) {
-        val accountType = sharedPreferences.getString("accountType", null);
-        viewModel.getdata(userid, accountType.toString())
+        val accountType = sharedPreferences.getString("accountType", null)
+        val token = sharedPreferences.getString("token", null)
+        viewModel.getdata(userid, accountType.toString(), token.toString())
 //        link.add("Lah")
 //        link.add("Lah")
 //        link.add("Lah")
@@ -102,27 +103,52 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
         viewModel.respond.observe(viewLifecycleOwner) {
             it?.let {
                 Log.e("Dashboard Data", it.toString())
+                Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
                 if (it.error != null) {
-                    binding.clAlertTop.visibility = View.VISIBLE
-                    binding.clSliders.visibility = View.GONE
-                    binding.chart.visibility = View.GONE
-                    binding.chartUserDevice.visibility = View.GONE
-                    binding.chartCountry.visibility = View.GONE
-                    binding.chartCity.visibility = View.GONE
-                    binding.chartSubsGrowth.visibility = View.GONE
-                    binding.chartReferer.visibility = View.GONE
-                    binding.animationView.visibility = View.VISIBLE
-                    binding.animationView2.visibility = View.VISIBLE
-                    binding.animationView3.visibility = View.VISIBLE
-                    binding.animationView4.visibility = View.VISIBLE
-                    binding.animationView5.visibility = View.VISIBLE
-                    binding.animationView6.visibility = View.VISIBLE
+                    if (it.error!!.get(0).limitDashboard != null) {
+                        binding.clAlertTop.visibility = View.VISIBLE
+                        binding.clSliders.visibility = View.GONE
+                        binding.chart.visibility = View.GONE
+                        binding.chartUserDevice.visibility = View.GONE
+                        binding.chartCountry.visibility = View.GONE
+                        binding.chartCity.visibility = View.GONE
+                        binding.chartSubsGrowth.visibility = View.GONE
+                        binding.chartReferer.visibility = View.GONE
+                        binding.animationView.visibility = View.VISIBLE
+                        binding.animationView2.visibility = View.VISIBLE
+                        binding.animationView3.visibility = View.VISIBLE
+                        binding.animationView4.visibility = View.VISIBLE
+                        binding.animationView5.visibility = View.VISIBLE
+                        binding.animationView6.visibility = View.VISIBLE
 
-                    val constraintLayout = binding.clParent
-                    val constraintSet = ConstraintSet()
-                    constraintSet.clone(constraintLayout)
-                    constraintSet.connect(binding.clMostVisitedLink.id, ConstraintSet.TOP, binding.clAlertTop.id, ConstraintSet.BOTTOM, 8)
-                    constraintSet.applyTo(constraintLayout)
+                        val constraintLayout = binding.clParent
+                        val constraintSet = ConstraintSet()
+                        constraintSet.clone(constraintLayout)
+                        constraintSet.connect(
+                            binding.clMostVisitedLink.id,
+                            ConstraintSet.TOP,
+                            binding.clAlertTop.id,
+                            ConstraintSet.BOTTOM,
+                            8
+                        )
+                        constraintSet.applyTo(constraintLayout)
+                    } else if (it.error.get(0).invalidToken != null) {
+                        Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
+                        binding.clAlertTop.visibility = View.GONE
+                        binding.clSliders.visibility = View.GONE
+                        binding.chart.visibility = View.GONE
+                        binding.chartUserDevice.visibility = View.GONE
+                        binding.chartCountry.visibility = View.GONE
+                        binding.chartCity.visibility = View.GONE
+                        binding.chartSubsGrowth.visibility = View.GONE
+                        binding.chartReferer.visibility = View.GONE
+                        binding.animationView.visibility = View.GONE
+                        binding.animationView2.visibility = View.GONE
+                        binding.animationView3.visibility = View.GONE
+                        binding.animationView4.visibility = View.GONE
+                        binding.animationView5.visibility = View.GONE
+                        binding.animationView6.visibility = View.GONE
+                    }
                 } else {
                     binding.clAlertTop.visibility = View.GONE
                     binding.clSliders.visibility = View.VISIBLE
@@ -338,8 +364,13 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
                     val subsSet: MutableList<Entry> = mutableListOf()
                     val month = ArrayList<String>()
 
-                    for(i in 0 .. it.data.get(0).subsGrowth!!.size - 1){
-                        subsSet.add(Entry(i.toFloat(), it.data.get(0).subsGrowth!!.get(i).subsData.toFloat()))
+                    for (i in 0..it.data.get(0).subsGrowth!!.size - 1) {
+                        subsSet.add(
+                            Entry(
+                                i.toFloat(),
+                                it.data.get(0).subsGrowth!!.get(i).subsData.toFloat()
+                            )
+                        )
                         month.add(it.data.get(0).subsGrowth!!.get(i).month)
                     }
 
@@ -360,7 +391,11 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
                     Log.i("Dashboard Data", citySet.toString())
                 }
 
-                val dataSliders = arrayListOf<String>(it.data!!.get(0).totalLink!!, it.data!!.get(0).totalLib!!, it.data!!.get(0).totalSubs!!)
+                val dataSliders = arrayListOf<String>(
+                    it.data!!.get(0).totalLink!!,
+                    it.data!!.get(0).totalLib!!,
+                    it.data!!.get(0).totalSubs!!
+                )
                 val adapter = SlidersAdapter(dataSliders)
                 adapter.onClickMoreInfo = this
                 binding.viewPager.adapter = adapter
@@ -378,9 +413,9 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
     }
 
     override fun onClickListener(position: Int) {
-        if(position == 0){
+        if (position == 0) {
             findNavController().navigate(R.id.linksFragment)
-        } else if(position == 1){
+        } else if (position == 1) {
             findNavController().navigate(R.id.libListFragment)
         } else {
             binding.svParent.smoothScrollTo(0, binding.clSubsGrowth.y.toInt())

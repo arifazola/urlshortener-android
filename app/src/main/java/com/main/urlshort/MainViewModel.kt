@@ -15,10 +15,10 @@ class MainViewModel: ViewModel() {
     val respond: LiveData<Respond?>
     get() = _respond
 
-    fun shortUrl(orgUrl: String, inputCustom: String, createdBy: String, accountType: String){
+    fun shortUrl(orgUrl: String, inputCustom: String, createdBy: String, accountType: String, token: String){
         viewModelScope.launch {
             try {
-                val short = UrlShortService.networkService.shortURL(orgUrl, inputCustom, createdBy, accountType)
+                val short = UrlShortService.networkService.shortURL(orgUrl, inputCustom, createdBy, accountType, token)
                 _respond.value = short
             }catch (e: Exception){
                 Log.e("Short URL Exception", e.message.toString())

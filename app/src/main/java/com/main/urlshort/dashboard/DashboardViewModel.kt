@@ -15,10 +15,12 @@ class DashboardViewModel: ViewModel() {
     val respond: LiveData<Respond>
     get() = _respond
 
-    fun getdata(userid: String, accountType: String){
+    fun getdata(userid: String, accountType: String, token: String){
         viewModelScope.launch {
+//            val data = UrlShortService.networkService.getdatadashboard(userid, accountType, token)
+//            _respond.value = data
             try {
-                val data = UrlShortService.networkService.getdatadashboard(userid, accountType)
+                val data = UrlShortService.networkService.getdatadashboard(userid, accountType, token)
                 _respond.value = data
             }catch (e: Exception){
                 Log.e("Dashboard exception", e.message.toString())

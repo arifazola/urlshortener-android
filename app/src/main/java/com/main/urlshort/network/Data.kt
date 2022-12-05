@@ -4,7 +4,8 @@ import com.squareup.moshi.Json
 
 data class Respond(
     val error: List<ErrorMsg>?,
-    val data: List<DataContent>?
+    val data: List<DataContent>?,
+    val token: String?,
 )
 //data class Error(
 //    val error: ErrorMsg?
@@ -71,7 +72,8 @@ data class ErrorMsg(
     @Json(name = "button_color") val buttoncolor: String?,
     @Json(name = "text_color") val text: String?,
     @Json(name = "limit_lib") val limitLib: String?,
-    @Json(name = "limit_dashboard") val limitDashboard: String?
+    @Json(name = "limit_dashboard") val limitDashboard: String?,
+    @Json(name = "invalid_token") val invalidToken: String?
 )
 
 data class StatsData(

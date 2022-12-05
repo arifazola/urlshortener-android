@@ -27,18 +27,18 @@ interface NetworkService{
     suspend fun login(@Query("email") email: String, @Query("password") password: String) : Respond
 
     @GET("api/get-all-links")
-    suspend fun getAllLinks(@Query("userid") userID: String) : Respond
+    suspend fun getAllLinks(@Query("userid") userID: String, @Query("token") token: String) : Respond
 
     @FormUrlEncoded
     @PUT("/api/links/edit")
-    suspend fun editLink(@Field("url_id") urlid: String, @Field("title") title: String, @Field("back_half") backhalf: String, @Field("userid") userid: String, @Field("account_type") accountType: String): Respond
+    suspend fun editLink(@Field("url_id") urlid: String, @Field("title") title: String, @Field("back_half") backhalf: String, @Field("userid") userid: String, @Field("account_type") accountType: String, @Field("token") token: String): Respond
 
     @GET("api/links/getstats")
     suspend fun getStats(@Query("url_short") urlshort: String): List<StatsData>
 
     @FormUrlEncoded
     @POST("api/links/short")
-    suspend fun shortURL(@Field("org_url") orgURL: String, @Field("input_custom") inputCustom: String, @Field("created_by") createdBy: String, @Field("account_type") accountType: String): Respond
+    suspend fun shortURL(@Field("org_url") orgURL: String, @Field("input_custom") inputCustom: String, @Field("created_by") createdBy: String, @Field("account_type") accountType: String, @Field("token") token: String): Respond
 
     @GET("api/linkinbio/data")
     suspend fun getLib(@Query("user_id") userid: String) : Respond
@@ -57,14 +57,14 @@ interface NetworkService{
     suspend fun addLib(@Field("back_half") backhalf: String, @Field("created_by") createdBy: String, @Field("account_type") accountType: String): Respond
 
     @GET("api/dashboard")
-    suspend fun getdatadashboard(@Query("userid") userid: String, @Query("account_type") accountType: String): Respond
+    suspend fun getdatadashboard(@Query("userid") userid: String, @Query("account_type") accountType: String, @Query("token") token: String): Respond
 
     @FormUrlEncoded
     @POST("api/signup/authgoogle")
     suspend fun authGoogle(@Field("email") email: String, @Field("name") name: String): Respond
 
-    @DELETE("api/links/delete/{userid}/{shortUrl}")
-    suspend fun deleteLink(@Path("userid") userid: String, @Path("shortUrl") shortUrl: String): Respond
+    @DELETE("api/links/delete/{userid}/{shortUrl}/{token}")
+    suspend fun deleteLink(@Path("userid") userid: String, @Path("shortUrl") shortUrl: String, @Path("token") token: String): Respond
 
     @DELETE("api/lib/delete/{userid}/{shortUrl}")
     suspend fun deleteLib(@Path("userid") userid: String, @Path("shortUrl") shortUrl: String): Respond
