@@ -44,6 +44,7 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var adapter: LibAdapter
     private var userid: String = ""
+    private var token = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,9 +67,13 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
         adapter.onEditLibListener = this
         adapter.onLongClickEditLibListener = this
         binding.rvLib.adapter = adapter
-        viewModel.getLibData(userid.toString())
+        token = sharedPreferences.getString("token", null).toString()
+        viewModel.delete.removeObservers(viewLifecycleOwner)
+        viewModel.getLibData(userid.toString(), token)
 
         viewModel.respond.observe(viewLifecycleOwner){
+            Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
+            token = it?.token.toString()
             adapter.data = it?.data!!
             Log.i("Lib Data", it.data.toString())
         }
@@ -79,13 +84,16 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
 
         viewModel.delete.observe(viewLifecycleOwner){
             Log.i("Lib Data Sisa", it.toString())
-            viewModel.getLibData(userid)
+            Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
+            token = it?.token.toString()
+//            viewModel.getLibData(userid, "taikucing")
             if(it?.data?.get(0)?.msg != null){
+                viewModel.getLibData(userid, token)
                 viewModel.respond.observe(viewLifecycleOwner){
-//                    adapter.data = it!!.data!!
-//                    adapter.notifyDataSetChanged()
+                    adapter.data = it!!.data!!
                     Log.i("Lib Data After Delete", it.toString())
                 }
+                adapter.notifyDataSetChanged()
 //                val respond = viewModel.respond.value
 //                adapter.data = respond?.data!!
 //                adapter.notifyDataSetChanged()
@@ -120,10 +128,11 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
     private fun createLib(backHalf: String, createdBy: String, tilBackHalf: TextInputLayout, bottomSheetExtension: BottomSheetExtension){
         viewModel.create.removeObservers(viewLifecycleOwner)
         val accountType = sharedPreferences.getString("accountType", null)
-        viewModel.createLib("smrt.link/${backHalf}", createdBy, accountType.toString())
+        viewModel.createLib("smrt.link/${backHalf}", createdBy, accountType.toString(), token)
 
         viewModel.create.observe(viewLifecycleOwner){
-            Log.i("Respond Create Lib", it.toString())
+            Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
+            token = it?.token.toString()
 
             if(it?.data?.get(0)?.duplicate != null){
                 tilBackHalf.isErrorEnabled = true
@@ -138,7 +147,7 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
                 tilBackHalf.error = it?.error?.get(0)?.backHalf
             } else if(it?.data?.get(0)?.msg == "success"){
                 tilBackHalf.isErrorEnabled = false
-                viewModel.getLibData(userid.toString())
+                viewModel.getLibData(userid.toString(), token)
 
                 viewModel.respond.observe(viewLifecycleOwner){
                     adapter.data = it?.data!!
@@ -147,7 +156,7 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
                 bottomSheetExtension.dialog.dismiss()
             } else if(it?.error?.get(0)?.limitLib != null){
                 Toast.makeText(requireContext(), it?.error?.get(0)?.limitLib.toString(), Toast.LENGTH_LONG).show()
-                viewModel.getLibData(userid.toString())
+                viewModel.getLibData(userid.toString(), token)
 
                 viewModel.respond.observe(viewLifecycleOwner){
                     adapter.data = it?.data!!
@@ -190,12 +199,13 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
     }
 
     override fun onLongClickEditLibListener(property: String) {
-        val dialog = DialogLib(R.array.lib_option, userid, property, viewModel, adapter)
+        val dialog = DialogLib(R.array.lib_option, userid, property, viewModel, adapter, token)
         dialog.show(requireFragmentManager(), "LIB Option")
         Log.i("Long Click", "Long Click")
+        Utils.showToast(requireContext(), token)
     }
 
-    class DialogLib(val arrayItem: Int, val userid: String,  val shortUrl: String, val viewModel: LibViewModel, val adapter: LibAdapter): DialogFragment(){
+    class DialogLib(val arrayItem: Int, val userid: String,  val shortUrl: String, val viewModel: LibViewModel, val adapter: LibAdapter, val token: String): DialogFragment(){
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val builder = AlertDialog.Builder(requireContext())
             builder.setItems(arrayItem, DialogInterface.OnClickListener { dialogInterface, i ->
@@ -205,7 +215,7 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
                 } else {
                     Utils.showToast(requireContext(), "Option Delete Selected")
                     viewModel.delete.removeObservers(requireActivity())
-                    viewModel.deleteLib(userid, shortUrl)
+                    viewModel.deleteLib(userid, shortUrl, token)
                 }
             })
             return builder.create()

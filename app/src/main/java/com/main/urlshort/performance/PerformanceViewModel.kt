@@ -19,10 +19,10 @@ class PerformanceViewModel: ViewModel() {
     val data: LiveData<Respond?>
         get() = _data
 
-    fun getLinkList(userid: String){
+    fun getLinkList(userid: String, token: String){
         viewModelScope.launch {
             try {
-                val linklist = UrlShortService.networkService.getLinkList(userid)
+                val linklist = UrlShortService.networkService.getLinkList(userid, token)
                 _respond.value = linklist
             } catch (e: Exception){
                 Log.e("Get Link List Exep", e.message.toString())
@@ -30,10 +30,10 @@ class PerformanceViewModel: ViewModel() {
         }
     }
 
-    fun getData(link: String, dateStart: String, dateEnd: String, userid: String, accountType: String){
+    fun getData(link: String, dateStart: String, dateEnd: String, userid: String, accountType: String, token: String){
         viewModelScope.launch {
             try {
-                val data = UrlShortService.networkService.getData(link, dateStart, dateEnd, userid, accountType)
+                val data = UrlShortService.networkService.getData(link, dateStart, dateEnd, userid, accountType, token)
                 _data.value = data
             }catch (e: Exception){
                 Log.e("Get Data Perormance Ex", e.message.toString())

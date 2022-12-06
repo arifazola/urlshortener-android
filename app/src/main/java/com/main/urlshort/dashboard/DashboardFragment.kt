@@ -69,6 +69,16 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
 //            Log.i("Dashboard Data", it.toString())
 //        }
 
+        binding.clAlertTop.visibility = View.GONE
+        binding.clSliders.visibility = View.GONE
+        binding.clMostVisitedLink.visibility = View.GONE
+        binding.clUserDevice.visibility = View.GONE
+        binding.clCountry.visibility = View.GONE
+        binding.clCity.visibility = View.GONE
+        binding.clSubsGrowth.visibility = View.GONE
+        binding.clReferer.visibility = View.GONE
+
+
         setMostVisitedLinkChart(userid!!)
 
 //        binding.svParent.setOnScrollChangeListener { view, i, i2, i3, i4 ->

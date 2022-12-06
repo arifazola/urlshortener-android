@@ -41,20 +41,20 @@ interface NetworkService{
     suspend fun shortURL(@Field("org_url") orgURL: String, @Field("input_custom") inputCustom: String, @Field("created_by") createdBy: String, @Field("account_type") accountType: String, @Field("token") token: String): Respond
 
     @GET("api/linkinbio/data")
-    suspend fun getLib(@Query("user_id") userid: String) : Respond
+    suspend fun getLib(@Query("user_id") userid: String, @Query("token") token: String) : Respond
 
     @GET("api/linkinbio/setting")
-    suspend fun getLibSettings(@Query("property") property: String, @Query("user_id") userid: String): Respond
+    suspend fun getLibSettings(@Query("property") property: String, @Query("user_id") userid: String, @Query("token") token: String): Respond
 
     @GET("api/linkinbio/edit")
     suspend fun editLib(@Query("user_id") userid: String, @Query("links[]") links: List<String>, @Query("titles[]") titles: List<String>, @Query("property") property: String,
                         @Query("background_type") backgroundType: String, @Query("first_color") firstColor: String, @Query("secondary_color") secondaryColor: String,
                         @Query("picture") picture: String, @Query("page_title") pageTitle: String, @Query("bio") bio: String, @Query("button_color") buttonColor: String,
-                        @Query("text_color") textColor: String) : Respond
+                        @Query("text_color") textColor: String, @Query("token") token: String) : Respond
 
     @FormUrlEncoded
     @POST("api/linkinbio/create")
-    suspend fun addLib(@Field("back_half") backhalf: String, @Field("created_by") createdBy: String, @Field("account_type") accountType: String): Respond
+    suspend fun addLib(@Field("back_half") backhalf: String, @Field("created_by") createdBy: String, @Field("account_type") accountType: String, @Field("token") token: String): Respond
 
     @GET("api/dashboard")
     suspend fun getdatadashboard(@Query("userid") userid: String, @Query("account_type") accountType: String, @Query("token") token: String): Respond
@@ -66,14 +66,14 @@ interface NetworkService{
     @DELETE("api/links/delete/{userid}/{shortUrl}/{token}")
     suspend fun deleteLink(@Path("userid") userid: String, @Path("shortUrl") shortUrl: String, @Path("token") token: String): Respond
 
-    @DELETE("api/lib/delete/{userid}/{shortUrl}")
-    suspend fun deleteLib(@Path("userid") userid: String, @Path("shortUrl") shortUrl: String): Respond
+    @DELETE("api/lib/delete/{userid}/{shortUrl}/{token}")
+    suspend fun deleteLib(@Path("userid") userid: String, @Path("shortUrl") shortUrl: String, @Path("token") token: String): Respond
 
     @GET("api/performance/getlinklist")
-    suspend fun getLinkList(@Query("user_id") userid: String): Respond
+    suspend fun getLinkList(@Query("user_id") userid: String, @Query("token") token: String): Respond
 
     @GET("api/performance/getdata")
-    suspend fun getData(@Query("links") links: String, @Query("date_start") dateStart: String, @Query("date_end") dateEnd: String, @Query("user_id") userid: String, @Query("account_type") accountType: String): Respond
+    suspend fun getData(@Query("links") links: String, @Query("date_start") dateStart: String, @Query("date_end") dateEnd: String, @Query("user_id") userid: String, @Query("account_type") accountType: String, @Query("token") token: String): Respond
 }
 
 object UrlShortService{

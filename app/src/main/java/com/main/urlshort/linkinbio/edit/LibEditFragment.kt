@@ -61,6 +61,7 @@ class LibEditFragment : Fragment(), ColorObserver{
     private var bio: String = ""
     private var buttonColor: String = ""
     private var textColor: String = ""
+    private var token = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -187,10 +188,15 @@ class LibEditFragment : Fragment(), ColorObserver{
             createLinkForm()
         }
 
-        viewModel.getLibSettings(args.property, userid.toString())
+        token = sharedPreferences.getString("token", null).toString()
+
+        viewModel.getLibSettings(args.property, userid.toString(), token)
 
         viewModel.setting.observe(viewLifecycleOwner){
             Log.i("LibSettings Data", it.toString())
+
+            Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
+            token = it.token.toString()
 
             it.data?.get(0)?.firstColor.let {
                 binding.colorPicker.setInitialColor(it!!.toColorInt())
@@ -283,10 +289,13 @@ class LibEditFragment : Fragment(), ColorObserver{
                 links.add(i, listLink.values.elementAt(i).get(0))
                 linkText.add(i, listLink.values.elementAt(i).get(1))
             }
-            viewModel.editlib(userid.toString(), links, linkText, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor)
+            viewModel.editlib(userid.toString(), links, linkText, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor, token)
 
             viewModel.respond.observe(viewLifecycleOwner){
                 Log.i("Edit Lib Respons", it.toString())
+
+                Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
+                token = it?.token.toString()
 
                 if(it?.error?.get(0)?.errorMsg == "Unauthorized"){
                     Toast.makeText(requireContext(), "Trying to access unauthorized property. If this is a mistake, reopen the page.", Toast.LENGTH_LONG).show()

@@ -50,6 +50,7 @@ class PerformanceFragment : Fragment(), AdapterView.OnItemClickListener,
     private var selectedLinks: String? = null
     private var dateStart: String? = null
     private var dateEnd: String? = null
+    private var token = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,9 +71,12 @@ class PerformanceFragment : Fragment(), AdapterView.OnItemClickListener,
 
         val items: MutableList<String> = mutableListOf()
         userid = sharedPreferences.getString("userid", null)
-        viewModel.getLinkList(userid.toString())
+        token = sharedPreferences.getString("token", null).toString()
+        viewModel.getLinkList(userid.toString(), token)
         viewModel.respond.observe(viewLifecycleOwner){
             it.let {
+                Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
+                token = it.token.toString()
                 for(i in 0 .. it.data!!.get(0).linkList!!.size - 1){
                     items.add(it.data!!.get(0).linkList!!.get(i).urlShort)
                 }
@@ -107,12 +111,16 @@ class PerformanceFragment : Fragment(), AdapterView.OnItemClickListener,
                             dateStart.toString(),
                             dateEnd.toString(),
                             userid.toString(),
-                            accountType.toString()
+                            accountType.toString(),
+                            token
                         )
                     }
 
                     viewModel.data.observe(viewLifecycleOwner){
                         it?.let {
+                            Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
+                            token = it.token.toString()
+
                             binding.svData.visibility = View.VISIBLE
                             val pieChart = binding.chartUserDevice
                             val pieEntry: MutableList<PieEntry> = mutableListOf()
@@ -295,7 +303,8 @@ class PerformanceFragment : Fragment(), AdapterView.OnItemClickListener,
                 dateStart.toString(),
                 dateEnd.toString(),
                 userid.toString(),
-                accountType.toString()
+                accountType.toString(),
+                token
             )
         }
     }

@@ -28,10 +28,10 @@ class LibViewModel: ViewModel() {
         get() = _delete
 
 
-    fun getLibData(userid: String){
+    fun getLibData(userid: String, token: String){
         viewModelScope.launch {
             try {
-                val libData = UrlShortService.networkService.getLib(userid)
+                val libData = UrlShortService.networkService.getLib(userid, token)
                 _respond.value = libData
             }catch (e: Exception){
                 Log.e("LibData Exception", e.message.toString())
@@ -39,10 +39,10 @@ class LibViewModel: ViewModel() {
         }
     }
 
-    fun getLibSettings(property: String, userid: String){
+    fun getLibSettings(property: String, userid: String, token: String){
         viewModelScope.launch {
             try {
-                val getSettings = UrlShortService.networkService.getLibSettings(property, userid)
+                val getSettings = UrlShortService.networkService.getLibSettings(property, userid, token)
                 _setting.value = getSettings
             }catch (e: Exception){
                 Log.e("LibSetting Exception", e.message.toString())
@@ -51,10 +51,10 @@ class LibViewModel: ViewModel() {
     }
 
     fun editlib(userid: String, links: MutableList<String>, titles: MutableList<String>, property: String, backgroundType: String, firstColor: String, secondaryColor: String,
-                picture: String, pageTitle: String, bio: String, buttonColor: String, textColor: String){
+                picture: String, pageTitle: String, bio: String, buttonColor: String, textColor: String, token: String){
         viewModelScope.launch {
             try {
-                val editLib = UrlShortService.networkService.editLib(userid, links, titles, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor)
+                val editLib = UrlShortService.networkService.editLib(userid, links, titles, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor, token)
                 _respond.value = editLib
             }catch (e: Exception){
                 Log.e("Edit Lib Exception", e.message.toString())
@@ -63,10 +63,10 @@ class LibViewModel: ViewModel() {
         resetValue()
     }
 
-    fun createLib(backHalf: String, createdBy: String, accountType: String){
+    fun createLib(backHalf: String, createdBy: String, accountType: String, token: String){
         viewModelScope.launch {
             try {
-                val addLib = UrlShortService.networkService.addLib(backHalf, createdBy, accountType)
+                val addLib = UrlShortService.networkService.addLib(backHalf, createdBy, accountType, token)
                 _create.value = addLib
             }catch (e: Exception){
                 Log.e("Add Lib Exception", e.message.toString())
@@ -75,10 +75,10 @@ class LibViewModel: ViewModel() {
         resetCreate()
     }
 
-    fun deleteLib(userid: String, urlShort: String){
+    fun deleteLib(userid: String, urlShort: String, token: String){
         viewModelScope.launch {
             try {
-                val delete = UrlShortService.networkService.deleteLib(userid, urlShort)
+                val delete = UrlShortService.networkService.deleteLib(userid, urlShort, token)
                 _delete.value = delete
             }catch (e: Exception){
                 Log.e("Delete Lib Exception", e.message.toString())
