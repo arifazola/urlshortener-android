@@ -112,6 +112,16 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
 
         viewModel.respond.observe(viewLifecycleOwner) {
             it?.let {
+                binding.clShimmerParent.visibility = View.GONE
+                binding.clAlertTop.visibility = View.VISIBLE
+                binding.clSliders.visibility = View.VISIBLE
+                binding.clMostVisitedLink.visibility = View.VISIBLE
+                binding.clUserDevice.visibility = View.VISIBLE
+                binding.clCountry.visibility = View.VISIBLE
+                binding.clCity.visibility = View.VISIBLE
+                binding.clSubsGrowth.visibility = View.VISIBLE
+                binding.clReferer.visibility = View.VISIBLE
+
                 Log.e("Dashboard Data", it.toString())
                 Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
                 if (it.error != null) {

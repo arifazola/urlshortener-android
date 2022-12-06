@@ -59,6 +59,8 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         binding.rvLinks.adapter = adapter
 
         viewModel.respond.observe(viewLifecycleOwner){
+            binding.shimmer.visibility = View.GONE
+            binding.rvLinks.visibility = View.VISIBLE
             Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
             if(it.error?.get(0)?.invalidToken != null){
                 Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())

@@ -72,6 +72,8 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
         viewModel.getLibData(userid.toString(), token)
 
         viewModel.respond.observe(viewLifecycleOwner){
+            binding.shimmer.visibility = View.GONE
+            binding.rvLib.visibility = View.VISIBLE
             Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
             token = it?.token.toString()
             adapter.data = it?.data!!
