@@ -79,5 +79,5 @@
     <fragment
         android:id="@+id/performanceFragment"
         android:name="com.main.urlshort.performance.PerformanceFragment"
-        android:label="PerformanceFragment" />
+        android:label="Performance" />
 </navigation>

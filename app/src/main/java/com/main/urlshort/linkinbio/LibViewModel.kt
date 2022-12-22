@@ -27,6 +27,14 @@ class LibViewModel: ViewModel() {
     val delete: LiveData<Respond?>
         get() = _delete
 
+    private val _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean>
+    get() = _loading
+
+    private val _loadingAnim = MutableLiveData<Boolean>()
+    val loadingAnim: LiveData<Boolean>
+        get() = _loadingAnim
+
 
     fun getLibData(userid: String, token: String){
         viewModelScope.launch {
@@ -65,11 +73,14 @@ class LibViewModel: ViewModel() {
 
     fun createLib(backHalf: String, createdBy: String, accountType: String, token: String){
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val addLib = UrlShortService.networkService.addLib(backHalf, createdBy, accountType, token)
                 _create.value = addLib
+                _loading.value = false
             }catch (e: Exception){
                 Log.e("Add Lib Exception", e.message.toString())
+                _loading.value = false
             }
         }
         resetCreate()
@@ -77,11 +88,14 @@ class LibViewModel: ViewModel() {
 
     fun deleteLib(userid: String, urlShort: String, token: String){
         viewModelScope.launch {
+            _loadingAnim.value = true
             try {
                 val delete = UrlShortService.networkService.deleteLib(userid, urlShort, token)
                 _delete.value = delete
+                _loadingAnim.value = false
             }catch (e: Exception){
                 Log.e("Delete Lib Exception", e.message.toString())
+                _loadingAnim.value = false
             }
         }
         resetDelete()

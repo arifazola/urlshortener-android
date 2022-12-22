@@ -37,7 +37,9 @@ class LoginFragment : Fragment() {
     private var param2: String? = null
     private lateinit var binding: FragmentLoginBinding
     private lateinit var viewModel: LoginViewModel
+    private lateinit var signupViewModel: SignupViewModel
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var googleAuth: GoogleAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,11 +56,28 @@ class LoginFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentLoginBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+        signupViewModel = ViewModelProvider(this).get(SignupViewModel::class.java)
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val tvSignup = binding.tvSignup
 
         tvSignup.setOnClickListener {
             findNavController().navigate(R.id.signupFragment)
+        }
+
+        signupViewModel.loading.observe(viewLifecycleOwner){
+            if(it == true){
+                showLoading()
+            } else if(it == false){
+                hideLoading()
+            }
+        }
+
+        viewModel.loading.observe(viewLifecycleOwner){
+            if(it == true){
+                showLoading()
+            } else if(it == false){
+                hideLoading()
+            }
         }
 
         binding.btnLogin.setOnClickListener {
@@ -67,6 +86,7 @@ class LoginFragment : Fragment() {
             val password = binding.tilPassword.editText?.text.toString()
 
             viewModel.login(email, password)
+
 
             viewModel.isLoggedIn.observe(viewLifecycleOwner){
                 if(it == true){
@@ -82,24 +102,67 @@ class LoginFragment : Fragment() {
                     startActivity(intent)
                 } else if(it == false){
                     val data = viewModel.respond.value
-                    Utils.showToast(requireContext(), data!!.error!!.get(0).errorMsg.toString())
+
+                    if(data!!.error!!.get(0).email != null){
+                        binding.tilEmail.isErrorEnabled = true
+                        binding.tilEmail.error = data.error!!.get(0).email
+                    } else {
+                        binding.tilEmail.isErrorEnabled = false
+                    }
+
+                    if(data.error!!.get(0).password != null){
+                        binding.tilPassword.isErrorEnabled = true
+                        binding.tilPassword.error = data.error.get(0).password
+                    } else {
+                        binding.tilPassword.isErrorEnabled = false
+                    }
+
+                    if(data.error.get(0).errorMsg != null){
+                        Utils.showToast(requireContext(), data.error.get(0).errorMsg.toString())
+                    }
                 }
             }
         }
 
         binding.cardView.setOnClickListener {
-            val googleAuth = GoogleAuth(requireContext())
+            googleAuth = GoogleAuth(requireContext())
             val init = googleAuth.initialize()
             startActivityForResult(init, 0)
         }
         return binding.root
     }
 
+    private fun showLoading(){
+        binding.tvLogo.visibility = View.GONE
+        binding.tvSignup.visibility = View.GONE
+        binding.tvTextBelowLogo.visibility = View.GONE
+        binding.cardView.visibility = View.GONE
+        binding.textView.visibility = View.GONE
+        binding.tilEmail.visibility = View.GONE
+        binding.tilPassword.visibility = View.GONE
+        binding.btnLogin.visibility = View.GONE
+        binding.loadinganim.visibility = View.VISIBLE
+        binding.tvLoading.visibility = View.VISIBLE
+    }
+
+    private fun hideLoading(){
+        binding.tvLogo.visibility = View.VISIBLE
+        binding.tvSignup.visibility = View.VISIBLE
+        binding.tvTextBelowLogo.visibility = View.VISIBLE
+        binding.cardView.visibility = View.VISIBLE
+        binding.textView.visibility = View.VISIBLE
+        binding.tilEmail.visibility = View.VISIBLE
+        binding.tilPassword.visibility = View.VISIBLE
+        binding.btnLogin.visibility = View.VISIBLE
+        binding.loadinganim.visibility = View.GONE
+        binding.tvLoading.visibility = View.GONE
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == 0){
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data!!)
             val viewModel = ViewModelProvider(this).get(SignupViewModel::class.java)
-            GoogleAuth.handleSignInResult(task, viewModel, viewLifecycleOwner, sharedPreferences, requireContext(), requireActivity())
+            GoogleAuth.handleSignInResult(task, viewModel, viewLifecycleOwner, sharedPreferences, requireContext(), requireActivity(), googleAuth.googleSignInClient)
         }
     }
 }

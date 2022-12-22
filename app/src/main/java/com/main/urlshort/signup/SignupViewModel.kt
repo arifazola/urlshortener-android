@@ -20,8 +20,13 @@ class SignupViewModel: ViewModel() {
     val isSignedupSuccess: LiveData<Boolean?>
     get() = _isSignedupSuccess
 
+    private val _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean>
+    get() = _loading
+
     fun signup(fullname: String, email: String, password: String){
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val signup = UrlShortService.networkService.signup(fullname, email, password)
                 _respond.value = signup
@@ -30,8 +35,10 @@ class SignupViewModel: ViewModel() {
                 } else {
                     _isSignedupSuccess.value = false
                 }
+                _loading.value = false
             } catch (e: IOException) {
                 Log.e("Signup Exception", e.message.toString())
+                _loading.value = false
             }
         }
         resetValue()
@@ -39,6 +46,7 @@ class SignupViewModel: ViewModel() {
 
     fun authGoogle(email: String, name: String){
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val auth = UrlShortService.networkService.authGoogle(email, name)
                 _respond.value = auth
@@ -47,8 +55,10 @@ class SignupViewModel: ViewModel() {
                 } else {
                     _isSignedupSuccess.value = false
                 }
+                _loading.value = false
             }catch (e: Exception){
                 Log.e("Auth Google Exception", e.message.toString())
+                _loading.value = false
             }
         }
         resetValue()

@@ -19,8 +19,13 @@ class LoginViewModel: ViewModel() {
     val isLoggedIn: LiveData<Boolean?>
     get() = _isLoggedIn
 
+    private val _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean>
+    get() = _loading
+
     fun login(email: String, password: String){
         viewModelScope.launch {
+            _loading.value = true
             try{
                 val login = UrlShortService.networkService.login(email, password)
                 _respond.value = login
@@ -29,8 +34,10 @@ class LoginViewModel: ViewModel() {
                 } else {
                     _isLoggedIn.value = false
                 }
+                _loading.value = false
             }catch (e: Exception){
                 Log.e("Login Exception", e.message.toString())
+                _loading.value = false
             }
         }
         resetValue()

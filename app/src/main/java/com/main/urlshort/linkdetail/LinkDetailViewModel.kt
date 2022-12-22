@@ -20,13 +20,20 @@ class LinkDetailViewModel: ViewModel() {
     val stats : LiveData<List<StatsData>>
     get() = _stats
 
+    private val _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean>
+    get() = _loading
+
     fun editLink(urlid: String, title: String, backhalf: String, userid: String, accountType: String, token: String){
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val editLink = UrlShortService.networkService.editLink(urlid, title, backhalf, userid, accountType, token)
                 _respond.value = editLink
+                _loading.value = false
             }catch (e: Exception){
                 Log.e("Edit Link Exception", e.message.toString())
+                _loading.value = false
             }
         }
         resetValue()
@@ -45,11 +52,14 @@ class LinkDetailViewModel: ViewModel() {
 
     fun deleteLink(userid: String, urlshort: String, token: String){
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val delete = UrlShortService.networkService.deleteLink(userid, urlshort, token)
                 _respond.value = delete
+                _loading.value = false
             }catch (e: Exception){
                 Log.e("Delete Link Exception", e.message.toString())
+                _loading.value = false
             }
         }
         resetValue()

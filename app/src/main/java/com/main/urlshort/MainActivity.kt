@@ -104,6 +104,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 token
             )
 
+            viewModel.loading.observe(this){
+                if(it == true){
+                    shorten.text = "Shorting Link"
+                    shorten.isEnabled = false
+                } else if(it == false){
+                    shorten.text = "Shorten Link"
+                    shorten.isEnabled = true
+                }
+            }
+
             viewModel.respond.observe(this) {
                 Log.i("Short URL Data", it.toString())
                 Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
@@ -258,6 +268,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     Utils.removeSharedPreferences(sharedPreferences, "userid")
                     Utils.removeSharedPreferences(sharedPreferences, "fullname")
                     Utils.removeSharedPreferences(sharedPreferences, "email")
+                    Utils.removeSharedPreferences(sharedPreferences, "accountType")
+                    Utils.removeSharedPreferences(sharedPreferences, "token")
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
                 }

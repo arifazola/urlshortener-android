@@ -46,7 +46,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [LinkDetailFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class LinkDetailFragment : Fragment() {
+class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -89,6 +89,16 @@ class LinkDetailFragment : Fragment() {
         binding.etTitleEdit.setText(args.title)
         binding.etBackHalf.setText(args.urlshort)
 
+        viewModel.loading.observe(viewLifecycleOwner){
+            if (it == true){
+                showLoading()
+                save.visibility = View.GONE
+            } else if(it == false){
+                hideLoading()
+                save.visibility = View.VISIBLE
+            }
+        }
+
         edit?.setOnClickListener {
             editLink()
         }
@@ -107,10 +117,41 @@ class LinkDetailFragment : Fragment() {
         }
 
         binding.btnDeleteLink.setOnClickListener {
-            val userid = sharedPreferences.getString("userid", null)
-            deleteLink(userid.toString(), args.urlshort)
+//            val userid = sharedPreferences.getString("userid", null)
+//            deleteLink(userid.toString(), args.urlshort)
+            val deleteDialog = DialogDelete()
+            deleteDialog.listener = this
+            deleteDialog.show(requireFragmentManager(), "DeleteDialog")
         }
         return binding.root
+    }
+
+    private fun showLoading(){
+        binding.tvDate.visibility = View.GONE
+        binding.tvOrgUrl.visibility = View.GONE
+        binding.textView6.visibility = View.GONE
+        binding.materialButton2.visibility = View.GONE
+        binding.chart.visibility = View.GONE
+        binding.etTitleEdit.visibility = View.GONE
+        binding.tvPrefixLink.visibility = View.GONE
+        binding.etBackHalf.visibility = View.GONE
+        binding.btnDeleteLink.visibility = View.GONE
+        binding.loadinganim.visibility = View.VISIBLE
+        binding.tvLoading.visibility = View.VISIBLE
+    }
+
+    private fun hideLoading(){
+        binding.tvDate.visibility = View.VISIBLE
+        binding.tvOrgUrl.visibility = View.VISIBLE
+        binding.textView6.visibility = View.VISIBLE
+        binding.materialButton2.visibility = View.VISIBLE
+        binding.chart.visibility = View.VISIBLE
+        binding.etTitleEdit.visibility = View.VISIBLE
+        binding.tvPrefixLink.visibility = View.VISIBLE
+        binding.etBackHalf.visibility = View.VISIBLE
+        binding.btnDeleteLink.visibility = View.VISIBLE
+        binding.loadinganim.visibility = View.GONE
+        binding.tvLoading.visibility = View.GONE
     }
 
     private fun deleteLink(userid: String, urlshort: String){
@@ -240,6 +281,16 @@ class LinkDetailFragment : Fragment() {
             chart.invalidate()
         }
     }
+
+    override fun onPositiveButtonClicked(dialog: DialogFragment) {
+        val userid = sharedPreferences.getString("userid", null)
+        binding.tvLoading.text = "Deleting Link"
+        deleteLink(userid.toString(), defaultUrlShort)
+    }
+
+    override fun onNegativeButtonClicked(dialog: DialogFragment) {
+        Utils.showToast(requireContext(), "Cance")
+    }
 }
 
 class AxisDateformatter(val values: ArrayList<String>): ValueFormatter(){
@@ -271,6 +322,34 @@ class DialogShare(val arrayItem: Int, val shortUrl: String): DialogFragment(){
                 Utils.showToast(requireContext(), "Smrtlink copied to clipboard")
             }
         })
+        return builder.create()
+    }
+}
+
+class DialogDelete: DialogFragment(){
+    internal lateinit var listener: DialogDeleteListener
+
+    interface DialogDeleteListener{
+        fun onPositiveButtonClicked(dialog: DialogFragment)
+        fun onNegativeButtonClicked(dialog: DialogFragment)
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val builder = AlertDialog.Builder(requireContext())
+
+        builder.setMessage("Are you sure you want to delete this link?")
+            .setPositiveButton("Delete", object: DialogInterface.OnClickListener{
+                override fun onClick(p0: DialogInterface?, p1: Int) {
+                    listener.onPositiveButtonClicked(this@DialogDelete)
+                }
+            })
+
+            .setNegativeButton("Cancel", object: DialogInterface.OnClickListener{
+                override fun onClick(p0: DialogInterface?, p1: Int) {
+                    listener.onNegativeButtonClicked(this@DialogDelete)
+                }
+
+            })
         return builder.create()
     }
 }

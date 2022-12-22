@@ -17,8 +17,6 @@ class AllLinksViewModel: ViewModel() {
 
     fun getData(userid: String, token: String){
         viewModelScope.launch {
-//            val getData = UrlShortService.networkService.getAllLinks(userid, token)
-//            _respond.value = getData
             try {
                 val getData = UrlShortService.networkService.getAllLinks(userid, token)
                 _respond.value = getData

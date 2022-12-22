@@ -37,12 +37,12 @@ class GoogleAuth(context: Context){
     }
 
     companion object Handler{
-        fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, viewModel: SignupViewModel, viewLifecycleOwner: LifecycleOwner, sharedPreferences: SharedPreferences, context: Context, activity: Activity){
+        fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, viewModel: SignupViewModel, viewLifecycleOwner: LifecycleOwner, sharedPreferences: SharedPreferences, context: Context, activity: Activity, googleSignInClient: GoogleSignInClient){
             try {
                 val account: GoogleSignInAccount = completedTask.getResult(ApiException::class.java)
 
                 viewModel.authGoogle(account.email.toString(), account.displayName.toString())
-
+                viewModel.isSignedupSuccess.removeObservers(viewLifecycleOwner)
                 viewModel.isSignedupSuccess.observe(viewLifecycleOwner){
                     if(it == true){
                         val data = viewModel.respond.value
@@ -56,7 +56,16 @@ class GoogleAuth(context: Context){
                         activity.finish()
                         activity.startActivity(intent)
                     } else if(it == false) {
-                        Utils.showToast(context, "Internal server error. Please try again")
+                        val data = viewModel.respond.value
+                        googleSignInClient.signOut().addOnCompleteListener {
+                            Utils.removeSharedPreferences(sharedPreferences, "userid")
+                            Utils.removeSharedPreferences(sharedPreferences, "fullname")
+                            Utils.removeSharedPreferences(sharedPreferences, "email")
+                            Utils.removeSharedPreferences(sharedPreferences, "accountType")
+                            Utils.removeSharedPreferences(sharedPreferences, "token")
+
+                            Utils.showToast(context, data?.error?.get(0)?.errorMsg.toString())
+                        }
                     }
                 }
             } catch (e: ApiException){
