@@ -10,11 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ConcatAdapter
 import com.main.urlshort.R
 import com.main.urlshort.SHARED_PREF_KEY
 import com.main.urlshort.Utils
 import com.main.urlshort.databinding.FragmentAllLinkBinding
 import com.main.urlshort.links.LinksFragmentDirections
+import com.main.urlshort.network.CurrentLink
 import com.main.urlshort.network.Respond
 
 // TODO: Rename parameter arguments, choose names that match
@@ -35,6 +37,8 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
     private lateinit var viewModel: AllLinksViewModel
     private lateinit var sharedPreferences: SharedPreferences
     private var page = 1
+    private var links: MutableList<CurrentLink> = mutableListOf()
+    private var totalLink = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,10 +58,29 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val userid = sharedPreferences.getString("userid", null)
         val token = sharedPreferences.getString("token", null)
+        Utils.showToast(requireContext(), "called")
         viewModel.getData(userid.toString(), token.toString(), page)
-        val adapter = AllLinksAdapter()
-        adapter.onLinkSelected = this
+        val linkAdapter = AllLinksAdapter()
+        val loadingAdapter = FooterAdapter()
+        val adapter = ConcatAdapter(linkAdapter, loadingAdapter)
         binding.rvLinks.adapter = adapter
+        linkAdapter.onLinkSelected = this
+        linkAdapter.data = links
+
+        viewModel.loading.observe(viewLifecycleOwner){
+            loadingAdapter.isLoading = it
+            loadingAdapter.notifyDataSetChanged()
+
+            if(it == false){
+                binding.rvLinks.setOnScrollChangeListener { view, i, i2, i3, i4 ->
+                    if(binding.rvLinks.canScrollVertically(1) == false){
+                        if(links.size != totalLink) {
+                            viewModel.getData(userid.toString(), token.toString(), page)
+                        }
+                    }
+                }
+            }
+        }
 
         viewModel.respond.observe(viewLifecycleOwner){
             binding.shimmer.visibility = View.GONE
@@ -66,23 +89,17 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
             if(it.error?.get(0)?.invalidToken != null){
                 Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
             } else {
-//                adapter.data = it.data!!
-//                binding.tvTotalLinks.text = it.data.size.toString()
-            }
-        }
-
-        viewModel.link.observe(viewLifecycleOwner){
-            Log.i("Link Adapter", it.toString())
-            adapter.data = it
-            binding.tvTotalLinks.text = it.size.toString()
-            adapter.notifyDataSetChanged()
-        }
-
-        binding.rvLinks.setOnScrollChangeListener { view, i, i2, i3, i4 ->
-//            Utils.showToast(requireContext(), binding.rvLinks.canScrollVertically(1).toString())
-            if(binding.rvLinks.canScrollVertically(1) == false){
-                page ++
-                viewModel.getData(userid.toString(), token.toString(), page)
+                for(i in 0 .. it.data!!.size - 1){
+                    links.add(
+                        CurrentLink(it.data.get(i).urlID.toString(), it.data.get(i).urlShort.toString(), it.data.get(i).orgUrl.toString(),
+                        it.data.get(i).qrCode.toString(), it.data.get(i).title.toString(), it.data.get(i).urlHit.toString(),
+                        it.data.get(i).createdDate.toString())
+                    )
+                }
+                totalLink = it.data.get(0).totalLink!!.toInt()
+                binding.tvTotalLinks.text = totalLink.toString()
+                linkAdapter.notifyDataSetChanged()
+                page++
             }
         }
 

@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var viewModel: MainViewModel
     private lateinit var sharedPreferences: SharedPreferences
     private var token = ""
+    private var isInLink: Boolean? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -142,7 +143,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
                 if (it?.data?.get(0)?.msg == true) {
-                    recreate()
+                    if(isInLink == true){
+                        findNavController(R.id.nav_host_fragment).navigate(R.id.linksFragment)
+                        recreate()
+                    } else {
+                        recreate()
+                    }
                 }
 
                 if (it?.data?.get(0)?.msg == false) {
@@ -290,16 +296,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             supportActionBar?.setCustomView(R.layout.custom_bar)
             binding.fabAddLink.visibility = View.GONE
             binding.fabSeePreview.visibility = View.GONE
+            isInLink = false
         } else if (destination.id == R.id.libEditFragment) {
             supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM or ActionBar.DISPLAY_SHOW_HOME or ActionBar.DISPLAY_HOME_AS_UP or ActionBar.DISPLAY_SHOW_TITLE)
             supportActionBar?.setDisplayShowCustomEnabled(true)
             supportActionBar?.setCustomView(R.layout.custom_bar_lib)
             binding.fabAddLink.visibility = View.GONE
             binding.fabSeePreview.visibility = View.VISIBLE
-        } else {
+            isInLink = false
+        }  else if(destination.id == R.id.linksFragment){
             supportActionBar?.setDisplayShowCustomEnabled(false)
             binding.fabAddLink.visibility = View.VISIBLE
             binding.fabSeePreview.visibility = View.GONE
+            isInLink = true
+        }else {
+            supportActionBar?.setDisplayShowCustomEnabled(false)
+            binding.fabAddLink.visibility = View.VISIBLE
+            binding.fabSeePreview.visibility = View.GONE
+            isInLink = false
         }
     }
 }

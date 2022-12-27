@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.main.urlshort.R
 import com.main.urlshort.network.CurrentLink
 import com.main.urlshort.network.DataContent
@@ -34,7 +35,7 @@ class AllLinksAdapter: RecyclerView.Adapter<AllLinksAdapter.ViewHolder>() {
 //        holder.orgUrl.text = item.data!!.get(position).orgUrl
         holder.orgUrl.text = item.orgUrl
 //        holder.shortLink.text = "smrt.link./" + item.data!!.get(position).urlShort
-        holder.shortLink.text = "smrt.link./" + item.urlShort
+        holder.shortLink.text = "shrlnk.my.id/" + item.urlShort
 //        holder.urlHit.text = item.data.get(position).urlHit
         holder.urlHit.text = item.urlHit
 
@@ -53,6 +54,41 @@ class AllLinksAdapter: RecyclerView.Adapter<AllLinksAdapter.ViewHolder>() {
         val orgUrl = item.findViewById<TextView>(R.id.tvOrgUrl)
         val shortLink = item.findViewById<TextView>(R.id.tvShortLink)
         val urlHit = item.findViewById<TextView>(R.id.tvUrlHit)
+    }
+}
+
+class FooterAdapter: RecyclerView.Adapter<FooterAdapter.FooterViewHolder>(){
+
+    var isLoading: Boolean? = true
+    set(value) {
+        field = value
+        notifyDataSetChanged()
+    }
+
+    class FooterViewHolder(item: View): RecyclerView.ViewHolder(item){
+        val shimmer = item.findViewById<ShimmerFrameLayout>(R.id.shimmer)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FooterViewHolder {
+        val v = LayoutInflater.from(parent.context)
+        val view = v.inflate(R.layout.rv_links_loading, parent, false)
+        return FooterViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: FooterViewHolder, position: Int) {
+        if(isLoading == true){
+            holder.shimmer.visibility = View.VISIBLE
+        } else {
+            holder.shimmer.visibility = View.GONE
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return if(isLoading == true){
+            1
+        } else {
+            0
+        }
     }
 }
 

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.tabs.TabLayout
 import com.main.urlshort.R
+import com.main.urlshort.Utils
 import com.main.urlshort.databinding.FragmentLinksBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -74,6 +75,6 @@ class LinksFragment : Fragment(), TabLayout.OnTabSelectedListener {
     }
 
     override fun onTabReselected(tab: TabLayout.Tab?) {
-
+        Utils.showToast(requireContext(), "Reselected")
     }
 }
