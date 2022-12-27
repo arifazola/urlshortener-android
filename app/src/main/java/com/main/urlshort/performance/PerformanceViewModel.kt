@@ -19,6 +19,10 @@ class PerformanceViewModel: ViewModel() {
     val data: LiveData<Respond?>
         get() = _data
 
+    private val _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean>
+    get() = _loading
+
     fun getLinkList(userid: String, token: String){
         viewModelScope.launch {
             try {
@@ -32,11 +36,14 @@ class PerformanceViewModel: ViewModel() {
 
     fun getData(link: String, dateStart: String, dateEnd: String, userid: String, accountType: String, token: String){
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val data = UrlShortService.networkService.getData(link, dateStart, dateEnd, userid, accountType, token)
                 _data.value = data
+                _loading.value = false
             }catch (e: Exception){
                 Log.e("Get Data Perormance Ex", e.message.toString())
+                _loading.value = false
             }
         }
         resetData()

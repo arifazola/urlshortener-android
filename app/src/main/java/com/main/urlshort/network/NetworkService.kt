@@ -27,7 +27,7 @@ interface NetworkService{
     suspend fun login(@Query("email") email: String, @Query("password") password: String) : Respond
 
     @GET("api/get-all-links")
-    suspend fun getAllLinks(@Query("userid") userID: String, @Query("token") token: String) : Respond
+    suspend fun getAllLinks(@Query("userid") userID: String, @Query("token") token: String, @Query("page") page: Int) : Respond
 
     @FormUrlEncoded
     @PUT("/api/links/edit")

@@ -120,3 +120,13 @@ data class SubsGrowth(
 data class LinksList(
     @Json(name = "url_short") val urlShort: String
 )
+
+data class CurrentLink(
+    val urlid: String,
+    val urlShort: String,
+    val orgUrl: String,
+    val qrCode: String,
+    val title: String,
+    val urlHit: String,
+    val createdDate: String
+)

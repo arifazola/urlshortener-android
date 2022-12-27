@@ -12,7 +12,7 @@ class PreviewLibActivity : AppCompatActivity() {
         val intent = intent
         val property = intent.getStringExtra("PROPERTY")
         setContentView(webView)
-        webView.loadUrl("http://192.168.1.6:8080/${property}")
+        webView.loadUrl("https://shrlnk.my.id/${property}")
         webView.settings.javaScriptEnabled = true
     }
 }

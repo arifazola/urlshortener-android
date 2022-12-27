@@ -27,6 +27,10 @@ class LibViewModel: ViewModel() {
     val delete: LiveData<Respond?>
         get() = _delete
 
+    private val _loadingData = MutableLiveData<Boolean>()
+    val loadingData: LiveData<Boolean>
+        get() = _loadingData
+
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean>
     get() = _loading
@@ -38,11 +42,14 @@ class LibViewModel: ViewModel() {
 
     fun getLibData(userid: String, token: String){
         viewModelScope.launch {
+            _loadingData.value = true
             try {
                 val libData = UrlShortService.networkService.getLib(userid, token)
                 _respond.value = libData
+                _loadingData.value = false
             }catch (e: Exception){
                 Log.e("LibData Exception", e.message.toString())
+                _loadingData.value = false
             }
         }
     }

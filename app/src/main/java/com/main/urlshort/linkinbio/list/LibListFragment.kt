@@ -71,6 +71,16 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
         viewModel.delete.removeObservers(viewLifecycleOwner)
         viewModel.getLibData(userid.toString(), token)
 
+        viewModel.loadingData.observe(viewLifecycleOwner){
+            if(it == true){
+                binding.shimmer.visibility = View.VISIBLE
+                binding.rvLib.visibility = View.GONE
+            } else if(it == false){
+                binding.shimmer.visibility = View.GONE
+                binding.rvLib.visibility = View.VISIBLE
+            }
+        }
+
         viewModel.loadingAnim.observe(viewLifecycleOwner){
             if(it == true){
                 showLoading()
@@ -266,11 +276,7 @@ class DialogLib(val arrayItem: Int, val userid: String,  val shortUrl: String, v
             if(i == 0){
                 findNavController().navigate(LibListFragmentDirections.actionLibListFragmentToLibEditFragment(shortUrl))
             } else {
-//                    Utils.showToast(requireContext(), "Option Delete Selected")
-//                    viewModel.delete.removeObservers(requireActivity())
-//                    viewModel.deleteLib(userid, shortUrl, token)
                 listener.onButtonTwoClicked(shortUrl)
-
             }
         })
         return builder.create()

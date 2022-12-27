@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.main.urlshort.R
+import com.main.urlshort.network.CurrentLink
 import com.main.urlshort.network.DataContent
 import com.main.urlshort.network.Respond
 import java.text.SimpleDateFormat
@@ -14,7 +15,7 @@ import java.text.SimpleDateFormat
 class AllLinksAdapter: RecyclerView.Adapter<AllLinksAdapter.ViewHolder>() {
 
     var onLinkSelected: OnLinkSelected? = null
-    var data = listOf<DataContent>()
+    var data = listOf<CurrentLink>()
     set(value) {
         field = value
         notifyDataSetChanged()
@@ -38,7 +39,7 @@ class AllLinksAdapter: RecyclerView.Adapter<AllLinksAdapter.ViewHolder>() {
         holder.urlHit.text = item.urlHit
 
         holder.clLink.setOnClickListener {
-            onLinkSelected?.setOnLinkSelected(item.urlID!!, item.createdDate!!, item.title!!, item.orgUrl!!, item.urlShort!!, item.urlHit!!)
+            onLinkSelected?.setOnLinkSelected(item.urlid!!, item.createdDate!!, item.title!!, item.orgUrl!!, item.urlShort!!, item.urlHit!!)
         }
     }
 

@@ -34,6 +34,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
     private lateinit var binding: FragmentAllLinkBinding
     private lateinit var viewModel: AllLinksViewModel
     private lateinit var sharedPreferences: SharedPreferences
+    private var page = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +54,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val userid = sharedPreferences.getString("userid", null)
         val token = sharedPreferences.getString("token", null)
-        viewModel.getData(userid.toString(), token.toString())
+        viewModel.getData(userid.toString(), token.toString(), page)
         val adapter = AllLinksAdapter()
         adapter.onLinkSelected = this
         binding.rvLinks.adapter = adapter
@@ -65,11 +66,25 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
             if(it.error?.get(0)?.invalidToken != null){
                 Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
             } else {
-                adapter.data = it.data!!
-                binding.tvTotalLinks.text = it.data.size.toString()
+//                adapter.data = it.data!!
+//                binding.tvTotalLinks.text = it.data.size.toString()
             }
         }
 
+        viewModel.link.observe(viewLifecycleOwner){
+            Log.i("Link Adapter", it.toString())
+            adapter.data = it
+            binding.tvTotalLinks.text = it.size.toString()
+            adapter.notifyDataSetChanged()
+        }
+
+        binding.rvLinks.setOnScrollChangeListener { view, i, i2, i3, i4 ->
+//            Utils.showToast(requireContext(), binding.rvLinks.canScrollVertically(1).toString())
+            if(binding.rvLinks.canScrollVertically(1) == false){
+                page ++
+                viewModel.getData(userid.toString(), token.toString(), page)
+            }
+        }
 
         return binding.root
     }
