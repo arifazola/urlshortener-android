@@ -54,6 +54,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        Utils.showToast(requireContext(), page.toString())
         links = mutableListOf()
         binding = FragmentAllLinkBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(AllLinksViewModel::class.java)
@@ -61,7 +62,13 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
             requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val userid = sharedPreferences.getString("userid", null)
         val token = sharedPreferences.getString("token", null)
-        Utils.showToast(requireContext(), "called")
+//        val fromDetail = sharedPreferences.getString("from_detail",null)
+//        val inLink = sharedPreferences.getString("in_link", null)
+//        Utils.showToast(requireContext(), fromDetail.toString())
+//        if(fromDetail == null || inLink == null){
+//            viewModel.getData(userid.toString(), token.toString(), page)
+//        }
+//        if (fromDetail == null) viewModel.getData(userid.toString(), token.toString(), page)
         viewModel.getData(userid.toString(), token.toString(), page)
         val linkAdapter = AllLinksAdapter()
         val loadingAdapter = FooterAdapter()
@@ -78,10 +85,11 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
 
             binding.rvLinks.setOnScrollChangeListener { view, i, i2, i3, i4 ->
                 if (binding.rvLinks.canScrollVertically(1) == false) {
-                    if(it != true) {
+                    if (it != true) {
                         if (links.size != totalLink) {
                             viewModel.getData(userid.toString(), token.toString(), page)
                             Log.e("Loading Stats", "Calling Data")
+                            Log.i("Current Page", "Page")
                         }
                     }
                 }
@@ -90,33 +98,38 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         }
 
         viewModel.respond.observe(viewLifecycleOwner) {
-            binding.shimmer.visibility = View.GONE
-            binding.rvLinks.visibility = View.VISIBLE
-            Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
-            if (it.error?.get(0)?.invalidToken != null) {
-                Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
-            } else {
-                if (links.size < it.data!!.get(0).totalLink!!.toInt()) {
-                    for (i in 0..it.data!!.size - 1) {
-                        links.add(
-                            CurrentLink(
-                                it.data.get(i).urlID.toString(),
-                                it.data.get(i).urlShort.toString(),
-                                it.data.get(i).orgUrl.toString(),
-                                it.data.get(i).qrCode.toString(),
-                                it.data.get(i).title.toString(),
-                                it.data.get(i).urlHit.toString(),
-                                it.data.get(i).createdDate.toString()
+            it.let {
+                Log.i("Data Link", it.toString())
+                binding.shimmer.visibility = View.GONE
+                binding.rvLinks.visibility = View.VISIBLE
+                Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
+                if (it?.error?.get(0)?.invalidToken != null) {
+                    Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
+                } else {
+//                    if (links.size < it?.data?.get(0)?.totalLink!!.toInt()) {
+                        for (i in 0..it?.data!!.size - 1) {
+                            links.add(
+                                CurrentLink(
+                                    it.data.get(i).urlID.toString(),
+                                    it.data.get(i).urlShort.toString(),
+                                    it.data.get(i).orgUrl.toString(),
+                                    it.data.get(i).qrCode.toString(),
+                                    it.data.get(i).title.toString(),
+                                    it.data.get(i).urlHit.toString(),
+                                    it.data.get(i).createdDate.toString()
+                                )
                             )
-                        )
+                        }
+                        totalLink = it.data.get(0).totalLink!!.toInt()
+                        binding.tvTotalLinks.text = totalLink.toString()
+                        linkAdapter.notifyDataSetChanged()
                     }
-                    totalLink = it.data.get(0).totalLink!!.toInt()
-                    binding.tvTotalLinks.text = totalLink.toString()
-                    linkAdapter.notifyDataSetChanged()
+//                if (fromDetail == null) page++
                     page++
+                    Log.i("Current Page", page.toString())
                 }
             }
-        }
+//        }
 
         return binding.root
     }
@@ -130,6 +143,8 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         urlhit: String
     ) {
 //        findNavController().navigate(AllLinkFragmentDirections.actionAllLinkFragmentToLinkDetailFragment2(date, title, orgurl, urlShort, urlhit))
+        viewModel.respond.removeObservers(viewLifecycleOwner)
+//        viewModel.resetValue()
         findNavController().navigate(
             LinksFragmentDirections.actionLinksFragmentToLinkDetailFragment(
                 date,
