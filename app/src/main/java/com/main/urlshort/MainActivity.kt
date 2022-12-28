@@ -144,8 +144,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 if (it?.data?.get(0)?.msg == true) {
                     if(isInLink == true){
+                        bottomSheet.dialog.dismiss()
                         findNavController(R.id.nav_host_fragment).navigate(R.id.linksFragment)
-                        recreate()
                     } else {
                         recreate()
                     }

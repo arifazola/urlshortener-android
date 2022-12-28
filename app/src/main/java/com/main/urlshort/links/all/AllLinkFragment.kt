@@ -39,6 +39,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
     private var page = 1
     private var links: MutableList<CurrentLink> = mutableListOf()
     private var totalLink = 0
+    private var isLoading: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,9 +54,11 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        links = mutableListOf()
         binding = FragmentAllLinkBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(AllLinksViewModel::class.java)
-        sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
+        sharedPreferences =
+            requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val userid = sharedPreferences.getString("userid", null)
         val token = sharedPreferences.getString("token", null)
         Utils.showToast(requireContext(), "called")
@@ -67,39 +70,51 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         linkAdapter.onLinkSelected = this
         linkAdapter.data = links
 
-        viewModel.loading.observe(viewLifecycleOwner){
+        viewModel.loading.observe(viewLifecycleOwner) {
             loadingAdapter.isLoading = it
             loadingAdapter.notifyDataSetChanged()
+            isLoading = it
 
-            if(it == false){
-                binding.rvLinks.setOnScrollChangeListener { view, i, i2, i3, i4 ->
-                    if(binding.rvLinks.canScrollVertically(1) == false){
-                        if(links.size != totalLink) {
+
+            binding.rvLinks.setOnScrollChangeListener { view, i, i2, i3, i4 ->
+                if (binding.rvLinks.canScrollVertically(1) == false) {
+                    if(it != true) {
+                        if (links.size != totalLink) {
                             viewModel.getData(userid.toString(), token.toString(), page)
+                            Log.e("Loading Stats", "Calling Data")
                         }
                     }
                 }
             }
+            Log.e("Loading Stats", it.toString())
         }
 
-        viewModel.respond.observe(viewLifecycleOwner){
+        viewModel.respond.observe(viewLifecycleOwner) {
             binding.shimmer.visibility = View.GONE
             binding.rvLinks.visibility = View.VISIBLE
             Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
-            if(it.error?.get(0)?.invalidToken != null){
+            if (it.error?.get(0)?.invalidToken != null) {
                 Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
             } else {
-                for(i in 0 .. it.data!!.size - 1){
-                    links.add(
-                        CurrentLink(it.data.get(i).urlID.toString(), it.data.get(i).urlShort.toString(), it.data.get(i).orgUrl.toString(),
-                        it.data.get(i).qrCode.toString(), it.data.get(i).title.toString(), it.data.get(i).urlHit.toString(),
-                        it.data.get(i).createdDate.toString())
-                    )
+                if (links.size < it.data!!.get(0).totalLink!!.toInt()) {
+                    for (i in 0..it.data!!.size - 1) {
+                        links.add(
+                            CurrentLink(
+                                it.data.get(i).urlID.toString(),
+                                it.data.get(i).urlShort.toString(),
+                                it.data.get(i).orgUrl.toString(),
+                                it.data.get(i).qrCode.toString(),
+                                it.data.get(i).title.toString(),
+                                it.data.get(i).urlHit.toString(),
+                                it.data.get(i).createdDate.toString()
+                            )
+                        )
+                    }
+                    totalLink = it.data.get(0).totalLink!!.toInt()
+                    binding.tvTotalLinks.text = totalLink.toString()
+                    linkAdapter.notifyDataSetChanged()
+                    page++
                 }
-                totalLink = it.data.get(0).totalLink!!.toInt()
-                binding.tvTotalLinks.text = totalLink.toString()
-                linkAdapter.notifyDataSetChanged()
-                page++
             }
         }
 
@@ -115,6 +130,15 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         urlhit: String
     ) {
 //        findNavController().navigate(AllLinkFragmentDirections.actionAllLinkFragmentToLinkDetailFragment2(date, title, orgurl, urlShort, urlhit))
-        findNavController().navigate(LinksFragmentDirections.actionLinksFragmentToLinkDetailFragment(date, title, orgurl, urlShort, urlhit, urlid))
+        findNavController().navigate(
+            LinksFragmentDirections.actionLinksFragmentToLinkDetailFragment(
+                date,
+                title,
+                orgurl,
+                urlShort,
+                urlhit,
+                urlid
+            )
+        )
     }
 }
