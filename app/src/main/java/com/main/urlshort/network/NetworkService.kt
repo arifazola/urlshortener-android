@@ -2,20 +2,29 @@ package com.main.urlshort.network
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
 import retrofit2.http.*
+import java.util.concurrent.TimeUnit
 
-private val URL = "https://shrlnk.my.id"
+//private val URL = "https://shrlnk.my.id"
+private val URL = "http://192.168.1.12:8080/"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
     .build()
 
+private val okhttp = OkHttpClient.Builder()
+    .readTimeout(60, TimeUnit.SECONDS)
+    .connectTimeout(60, TimeUnit.SECONDS)
+    .build()
+
 private val retrofit = Retrofit.Builder()
     .baseUrl(URL)
     .addConverterFactory(MoshiConverterFactory.create(moshi))
+    .client(okhttp)
     .build()
 
 interface NetworkService{

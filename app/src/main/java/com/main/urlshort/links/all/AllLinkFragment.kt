@@ -36,7 +36,6 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
     private lateinit var binding: FragmentAllLinkBinding
     private lateinit var viewModel: AllLinksViewModel
     private lateinit var sharedPreferences: SharedPreferences
-    private var page = 1
     private var links: MutableList<CurrentLink> = mutableListOf()
     private var totalLink = 0
     private var isLoading: Boolean? = null
@@ -54,6 +53,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        var page = 1
         Utils.showToast(requireContext(), page.toString())
         links = mutableListOf()
         binding = FragmentAllLinkBinding.inflate(inflater)
@@ -69,7 +69,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
 //            viewModel.getData(userid.toString(), token.toString(), page)
 //        }
 //        if (fromDetail == null) viewModel.getData(userid.toString(), token.toString(), page)
-        viewModel.getData(userid.toString(), token.toString(), page)
+        viewModel.getData(userid.toString(), token.toString(), 1)
         val linkAdapter = AllLinksAdapter()
         val loadingAdapter = FooterAdapter()
         val adapter = ConcatAdapter(linkAdapter, loadingAdapter)
@@ -77,6 +77,29 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         linkAdapter.onLinkSelected = this
         linkAdapter.data = links
 
+        viewModel.error.observe(viewLifecycleOwner){
+            if(it == true){
+                Utils.showToast(requireContext(), "Internal Server Error. Please Try Again")
+                binding.shimmer.visibility = View.GONE
+            }
+        }
+
+        viewModel.isCancelled.observe(viewLifecycleOwner){
+            if (it == true){
+                Log.e("Job Cancelled", "Job Cancelled")
+            }
+        }
+
+//        viewModel.errors.observe(viewLifecycleOwner){
+//            if(it.get(0) == true && it.get(1) == null){
+//                Utils.showToast(requireContext(), "Internal Server Error. Please Try Again")
+//                binding.shimmer.visibility = View.GONE
+//            } else if(it.get(1) == true){
+//                Log.i("Job Cancelled", "Job Cancelled")
+//            }
+//        }
+
+        viewModel.loading.removeObservers(viewLifecycleOwner)
         viewModel.loading.observe(viewLifecycleOwner) {
             loadingAdapter.isLoading = it
             loadingAdapter.notifyDataSetChanged()
@@ -85,7 +108,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
 
             binding.rvLinks.setOnScrollChangeListener { view, i, i2, i3, i4 ->
                 if (binding.rvLinks.canScrollVertically(1) == false) {
-                    if (it != true) {
+                    if (it == false) {
                         if (links.size != totalLink) {
                             viewModel.getData(userid.toString(), token.toString(), page)
                             Log.e("Loading Stats", "Calling Data")
@@ -97,8 +120,9 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
             Log.e("Loading Stats", it.toString())
         }
 
+        viewModel.respond.removeObservers(viewLifecycleOwner)
         viewModel.respond.observe(viewLifecycleOwner) {
-            it.let {
+            it?.let {
                 Log.i("Data Link", it.toString())
                 binding.shimmer.visibility = View.GONE
                 binding.rvLinks.visibility = View.VISIBLE
@@ -143,8 +167,10 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         urlhit: String
     ) {
 //        findNavController().navigate(AllLinkFragmentDirections.actionAllLinkFragmentToLinkDetailFragment2(date, title, orgurl, urlShort, urlhit))
-        viewModel.respond.removeObservers(viewLifecycleOwner)
+//        viewModel.respond.removeObservers(viewLifecycleOwner)
 //        viewModel.resetValue()
+//        viewModel.resetLoading()
+        viewModel.cancelJob()
         findNavController().navigate(
             LinksFragmentDirections.actionLinksFragmentToLinkDetailFragment(
                 date,
