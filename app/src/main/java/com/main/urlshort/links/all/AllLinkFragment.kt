@@ -58,10 +58,11 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         links = mutableListOf()
         binding = FragmentAllLinkBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(AllLinksViewModel::class.java)
+        viewModel.cancelJob()
         sharedPreferences =
             requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val userid = sharedPreferences.getString("userid", null)
-        val token = sharedPreferences.getString("token", null)
+        var token = sharedPreferences.getString("token", null)
 //        val fromDetail = sharedPreferences.getString("from_detail",null)
 //        val inLink = sharedPreferences.getString("in_link", null)
 //        Utils.showToast(requireContext(), fromDetail.toString())
@@ -127,6 +128,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
                 binding.shimmer.visibility = View.GONE
                 binding.rvLinks.visibility = View.VISIBLE
                 Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
+                token = it?.token.toString()
                 if (it?.error?.get(0)?.invalidToken != null) {
                     Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
                 } else {
