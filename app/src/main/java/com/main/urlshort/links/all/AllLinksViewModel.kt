@@ -17,6 +17,10 @@ class AllLinksViewModel: ViewModel() {
     val respond: LiveData<Respond?>
     get() = _respond
 
+    private val _respondTop = MutableLiveData<Respond?>()
+    val respondTop: LiveData<Respond?>
+    get() = _respondTop
+
 //    private val _links = MutableLiveData<List<CurrentLink>>()
 //    val link: LiveData<List<CurrentLink>>
 //    get() = _links
@@ -48,12 +52,9 @@ class AllLinksViewModel: ViewModel() {
                 _loading.value = false
                 _error.value = false
                 _isCancelled.value = false
-//                _errors.value = listOf(false, false)
             }catch (e: Exception){
                 Log.e("AllLinksException", e.message.toString())
                 _loading.value = false
-//                _error.value = true
-//                _isCancelled.value = false
                 if(e.message.toString() == "StandaloneCoroutine was cancelled"){
                     _error.value = false
                     _isCancelled.value = true
@@ -61,7 +62,6 @@ class AllLinksViewModel: ViewModel() {
                     _error.value = true
                     _isCancelled.value = false
                 }
-//                _errors.value = listOf(true, null)
             }
         }
         resetValue()
@@ -80,5 +80,16 @@ class AllLinksViewModel: ViewModel() {
 
     fun resetLoading(){
         _loading.value = null
+    }
+
+    fun getDataTop(userid: String, token: String){
+        viewModelScope.launch {
+            try {
+                val data = UrlShortService.networkService.getTopTen(userid, token)
+                _respondTop.value = data
+            }catch (e: Exception){
+                Log.e("Top Ten Exception", e.message.toString())
+            }
+        }
     }
 }

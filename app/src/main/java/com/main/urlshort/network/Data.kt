@@ -7,13 +7,6 @@ data class Respond(
     val data: List<DataContent>?,
     val token: String?,
 )
-//data class Error(
-//    val error: ErrorMsg?
-//)
-//
-//data class Data(
-//    val data: DataContent?
-//)
 
 data class DataContent(
      val userid: String?,

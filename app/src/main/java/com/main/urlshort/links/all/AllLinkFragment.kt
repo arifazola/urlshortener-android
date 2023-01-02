@@ -53,8 +53,8 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        Log.i("Fragment Create", "All Link")
         var page = 1
-        Utils.showToast(requireContext(), page.toString())
         links = mutableListOf()
         binding = FragmentAllLinkBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(AllLinksViewModel::class.java)
@@ -71,6 +71,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
 //        }
 //        if (fromDetail == null) viewModel.getData(userid.toString(), token.toString(), page)
         viewModel.getData(userid.toString(), token.toString(), 1)
+//        viewModel.getDataTop(userid.toString(), token.toString())
         val linkAdapter = AllLinksAdapter()
         val loadingAdapter = FooterAdapter()
         val adapter = ConcatAdapter(linkAdapter, loadingAdapter)
@@ -124,15 +125,13 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         viewModel.respond.removeObservers(viewLifecycleOwner)
         viewModel.respond.observe(viewLifecycleOwner) {
             it?.let {
-                Log.i("Data Link", it.toString())
                 binding.shimmer.visibility = View.GONE
                 binding.rvLinks.visibility = View.VISIBLE
-                Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
-                token = it?.token.toString()
-                if (it?.error?.get(0)?.invalidToken != null) {
+                Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
+                token = it.token.toString()
+                if (it.error?.get(0)?.invalidToken != null) {
                     Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
                 } else {
-//                    if (links.size < it?.data?.get(0)?.totalLink!!.toInt()) {
                         for (i in 0..it?.data!!.size - 1) {
                             links.add(
                                 CurrentLink(
@@ -150,9 +149,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
                         binding.tvTotalLinks.text = totalLink.toString()
                         linkAdapter.notifyDataSetChanged()
                     }
-//                if (fromDetail == null) page++
                     page++
-                    Log.i("Current Page", page.toString())
                 }
             }
 //        }
