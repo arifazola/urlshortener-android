@@ -90,4 +90,8 @@
         android:id="@+id/performanceFragment"
         android:name="com.main.urlshort.performance.PerformanceFragment"
         android:label="Performance" />
+    <fragment
+        android:id="@+id/QRFragment"
+        android:name="com.main.urlshort.qr.QRFragment"
+        android:label="QRFragment" />
 </navigation>

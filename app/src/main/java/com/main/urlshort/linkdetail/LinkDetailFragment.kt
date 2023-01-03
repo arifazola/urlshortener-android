@@ -55,6 +55,7 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
     private lateinit var viewModel: LinkDetailViewModel
     private lateinit var edit: ImageView
     private lateinit var save: ImageView
+    private lateinit var qr: ImageView
     private lateinit var sharedPreferences: SharedPreferences
     private var defaultUrlShort = ""
     private var token = ""
@@ -82,6 +83,7 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
         customActionBar = (requireActivity() as AppCompatActivity).supportActionBar?.customView!!
         edit = customActionBar.findViewById(R.id.imgEdit)
         save = customActionBar.findViewById(R.id.imgSave)
+        qr = customActionBar.findViewById(R.id.imgQR)
         binding.tvDate.text = SimpleDateFormat("MMMM dd, yyyy HH:mm").format(args.date.toLong() * 1000L)
         binding.tvOrgUrl.text = args.orgurl
         binding.textView6.text = args.urlshort
@@ -105,6 +107,10 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
 
         save.setOnClickListener {
             saveLink(args.urlid)
+        }
+
+        qr.setOnClickListener {
+            findNavController().navigate(R.id.QRFragment)
         }
 
         if(args.urlhit.toInt() != 0){
@@ -180,8 +186,6 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
     }
 
     private fun editLink(){
-        val title = customActionBar.findViewById<TextView>(R.id.tvTitleCustom)
-        title.text = "Edit"
         val constraint = binding.clLinkDetail
         val constraintSet = ConstraintSet()
         constraintSet.clone(constraint)
