@@ -123,3 +123,7 @@ data class CurrentLink(
     val urlHit: String,
     val createdDate: String
 )
+
+data class CurrentLib(
+    val urlShort: String
+)

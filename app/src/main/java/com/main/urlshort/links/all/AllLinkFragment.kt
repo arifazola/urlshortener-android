@@ -79,15 +79,15 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         linkAdapter.onLinkSelected = this
         linkAdapter.data = links
 
-        viewModel.error.observe(viewLifecycleOwner){
-            if(it == true){
+        viewModel.error.observe(viewLifecycleOwner) {
+            if (it == true) {
                 Utils.showToast(requireContext(), "Internal Server Error. Please Try Again")
                 binding.shimmer.visibility = View.GONE
             }
         }
 
-        viewModel.isCancelled.observe(viewLifecycleOwner){
-            if (it == true){
+        viewModel.isCancelled.observe(viewLifecycleOwner) {
+            if (it == true) {
                 Log.e("Job Cancelled", "Job Cancelled")
             }
         }
@@ -131,27 +131,27 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
                 token = it.token.toString()
                 if (it.error?.get(0)?.invalidToken != null) {
                     Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
-                } else {
-                        for (i in 0..it?.data!!.size - 1) {
-                            links.add(
-                                CurrentLink(
-                                    it.data.get(i).urlID.toString(),
-                                    it.data.get(i).urlShort.toString(),
-                                    it.data.get(i).orgUrl.toString(),
-                                    it.data.get(i).qrCode.toString(),
-                                    it.data.get(i).title.toString(),
-                                    it.data.get(i).urlHit.toString(),
-                                    it.data.get(i).createdDate.toString()
-                                )
+                } else if (it.data != null) {
+                    for (i in 0..it?.data!!.size - 1) {
+                        links.add(
+                            CurrentLink(
+                                it.data.get(i).urlID.toString(),
+                                it.data.get(i).urlShort.toString(),
+                                it.data.get(i).orgUrl.toString(),
+                                it.data.get(i).qrCode.toString(),
+                                it.data.get(i).title.toString(),
+                                it.data.get(i).urlHit.toString(),
+                                it.data.get(i).createdDate.toString()
                             )
-                        }
-                        totalLink = it.data.get(0).totalLink!!.toInt()
-                        binding.tvTotalLinks.text = totalLink.toString()
-                        linkAdapter.notifyDataSetChanged()
+                        )
                     }
+                    totalLink = it.data.get(0).totalLink!!.toInt()
+                    binding.tvTotalLinks.text = totalLink.toString()
+                    linkAdapter.notifyDataSetChanged()
                     page++
                 }
             }
+        }
 //        }
 
         return binding.root
@@ -180,5 +180,10 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
                 urlid
             )
         )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.cancelJob()
     }
 }

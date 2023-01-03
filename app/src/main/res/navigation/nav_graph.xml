@@ -17,6 +17,11 @@
         <action
             android:id="@+id/action_linksFragment_to_linkDetailFragment"
             app:destination="@id/linkDetailFragment" />
+        <action
+            android:id="@+id/action_linksFragment_self"
+            app:destination="@id/linksFragment"
+            app:popUpTo="@id/linksFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/linkDetailFragment"
@@ -75,6 +80,11 @@
         <action
             android:id="@+id/action_libListFragment_to_libEditFragment"
             app:destination="@id/libEditFragment" />
+        <action
+            android:id="@+id/action_libListFragment_self"
+            app:destination="@id/libListFragment"
+            app:popUpTo="@id/libListFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/performanceFragment"

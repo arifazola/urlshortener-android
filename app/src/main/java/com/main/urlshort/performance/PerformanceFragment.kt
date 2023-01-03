@@ -329,4 +329,9 @@ class PerformanceFragment : Fragment(), AdapterView.OnItemClickListener,
     override fun onNothingSelected() {
         binding.chartReferer.centerText = ""
     }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.cancelJob()
+    }
 }

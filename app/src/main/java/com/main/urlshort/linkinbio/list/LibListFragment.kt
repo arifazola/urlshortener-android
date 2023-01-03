@@ -13,7 +13,9 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ConcatAdapter
 import com.google.android.material.textfield.TextInputLayout
 import com.main.urlshort.BottomSheetExtension
 import com.main.urlshort.R
@@ -24,6 +26,8 @@ import com.main.urlshort.databinding.FragmentLibListBinding
 import com.main.urlshort.linkdetail.DialogShare
 import com.main.urlshort.linkdetail.LinkDetailFragmentDirections
 import com.main.urlshort.linkinbio.LibViewModel
+import com.main.urlshort.links.all.FooterAdapter
+import com.main.urlshort.network.CurrentLib
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,6 +49,8 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
     private lateinit var adapter: LibAdapter
     private var userid: String = ""
     private var token = ""
+    private var data: MutableList<CurrentLib> = mutableListOf()
+    private var totalLink = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,25 +65,49 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        var page = 1
+        data = mutableListOf()
         binding = FragmentLibListBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(LibViewModel::class.java)
+        viewModel.cancelJob()
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         userid = sharedPreferences.getString("userid", null).toString()
         adapter = LibAdapter()
+        val footerAdapter = FooterAdapterLib()
+        val concatAdapter = ConcatAdapter(adapter, footerAdapter)
         adapter.onEditLibListener = this
         adapter.onLongClickEditLibListener = this
-        binding.rvLib.adapter = adapter
+        binding.rvLib.adapter = concatAdapter
         token = sharedPreferences.getString("token", null).toString()
         viewModel.delete.removeObservers(viewLifecycleOwner)
-        viewModel.getLibData(userid.toString(), token)
+        viewModel.getLibData(userid.toString(), token, 1)
+
+        adapter.data = data
+
+        viewModel.error.observe(viewLifecycleOwner){
+            if(it == true){
+                Utils.showToast(requireContext(), "Internal Server Error. Please Try Again")
+                binding.shimmer.visibility = View.GONE
+            }
+        }
+
+        viewModel.isCancelled.observe(viewLifecycleOwner){
+            if (it == true){
+                Log.e("Job Cancelled", "Job Cancelled")
+            }
+        }
 
         viewModel.loadingData.observe(viewLifecycleOwner){
-            if(it == true){
-                binding.shimmer.visibility = View.VISIBLE
-                binding.rvLib.visibility = View.GONE
-            } else if(it == false){
-                binding.shimmer.visibility = View.GONE
-                binding.rvLib.visibility = View.VISIBLE
+            footerAdapter.isLoading = it
+
+            binding.rvLib.setOnScrollChangeListener { _, _, _, _, _ ->
+                if(binding.rvLib.canScrollVertically(0) == false){
+                    if(it == false){
+                        if(data.size < totalLink){
+                            viewModel.getLibData(userid, token, page)
+                        }
+                    }
+                }
             }
         }
 
@@ -89,13 +119,26 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
             }
         }
 
-        viewModel.respond.observe(viewLifecycleOwner){
-            binding.shimmer.visibility = View.GONE
-            binding.rvLib.visibility = View.VISIBLE
-            Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
-            token = it?.token.toString()
-            adapter.data = it?.data!!
-            Log.i("Lib Data", it.data.toString())
+        viewModel.respond.removeObservers(viewLifecycleOwner)
+        viewModel.respond.observe(viewLifecycleOwner) {
+            it?.let {
+                binding.shimmer.visibility = View.GONE
+                binding.rvLib.visibility = View.VISIBLE
+                Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
+                token = it?.token.toString()
+                if (it.error?.get(0)?.invalidToken != null) {
+                    Utils.showToast(requireContext(), it.error.get(0).invalidToken.toString())
+                } else {
+                    for (i in 0..it.data!!.size - 1) {
+                        data.add(CurrentLib(it.data.get(i)?.urlShort.toString()))
+                    }
+
+                    totalLink = it.data.get(0).totalLink!!.toInt()
+                    adapter.notifyDataSetChanged()
+                    page++
+                }
+                Log.i("Lib Data", it.data.toString())
+            }
         }
 
         binding.btnAddLib.setOnClickListener {
@@ -108,12 +151,15 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
             token = it?.token.toString()
 //            viewModel.getLibData(userid, "taikucing")
             if(it?.data?.get(0)?.msg != null){
-                viewModel.getLibData(userid, token)
-                viewModel.respond.observe(viewLifecycleOwner){
-                    adapter.data = it!!.data!!
-                    Log.i("Lib Data After Delete", it.toString())
-                }
-                adapter.notifyDataSetChanged()
+                findNavController().navigate(LibListFragmentDirections.actionLibListFragmentSelf())
+//                viewModel.getLibData(userid, token, 1)
+//                viewModel.respond.observe(viewLifecycleOwner){
+//                    adapter.data = it!!.data!!
+//                    Log.i("Lib Data After Delete", it.toString())
+//                }
+//                adapter.notifyDataSetChanged()
+
+
 //                val respond = viewModel.respond.value
 //                adapter.data = respond?.data!!
 //                adapter.notifyDataSetChanged()
@@ -193,21 +239,22 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
                 tilBackHalf.error = it?.error?.get(0)?.backHalf
             } else if(it?.data?.get(0)?.msg == "success"){
                 tilBackHalf.isErrorEnabled = false
-                viewModel.getLibData(userid.toString(), token)
+                findNavController().navigate(LibListFragmentDirections.actionLibListFragmentSelf())
+//                viewModel.getLibData(userid.toString(), token, 1)
 
-                viewModel.respond.observe(viewLifecycleOwner){
-                    adapter.data = it?.data!!
-                }
-                adapter.notifyDataSetChanged()
+//                viewModel.respond.observe(viewLifecycleOwner){
+//                    adapter.data = it?.data!!
+//                }
+//                adapter.notifyDataSetChanged()
                 bottomSheetExtension.dialog.dismiss()
             } else if(it?.error?.get(0)?.limitLib != null){
                 Toast.makeText(requireContext(), it?.error?.get(0)?.limitLib.toString(), Toast.LENGTH_LONG).show()
-                viewModel.getLibData(userid.toString(), token)
+//                viewModel.getLibData(userid.toString(), token, 1)
 
-                viewModel.respond.observe(viewLifecycleOwner){
-                    adapter.data = it?.data!!
-                }
-                adapter.notifyDataSetChanged()
+//                viewModel.respond.observe(viewLifecycleOwner){
+//                    adapter.data = it?.data!!
+//                }
+//                adapter.notifyDataSetChanged()
                 bottomSheetExtension.dialog.dismiss()
             } else {
                 tilBackHalf.isErrorEnabled = false
@@ -251,12 +298,18 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
     }
 
     override fun onButtonZeroClicked(property: String) {
-
+        viewModel.cancelJob()
+        findNavController().navigate(LibListFragmentDirections.actionLibListFragmentToLibEditFragment(property))
     }
 
     override fun onButtonTwoClicked(property: String) {
         viewModel.delete.removeObservers(requireActivity())
         viewModel.deleteLib(userid, property, token)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.cancelJob()
     }
 }
 
@@ -274,7 +327,8 @@ class DialogLib(val arrayItem: Int, val userid: String,  val shortUrl: String, v
         builder.setItems(arrayItem, DialogInterface.OnClickListener { dialogInterface, i ->
 
             if(i == 0){
-                findNavController().navigate(LibListFragmentDirections.actionLibListFragmentToLibEditFragment(shortUrl))
+                listener.onButtonZeroClicked(shortUrl)
+//                findNavController().navigate(LibListFragmentDirections.actionLibListFragmentToLibEditFragment(shortUrl))
             } else {
                 listener.onButtonTwoClicked(shortUrl)
             }

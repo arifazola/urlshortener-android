@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.main.urlshort.network.Respond
 import com.main.urlshort.network.UrlShortService
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class PerformanceViewModel: ViewModel() {
@@ -23,8 +24,10 @@ class PerformanceViewModel: ViewModel() {
     val loading: LiveData<Boolean>
     get() = _loading
 
+    private var runningJob: Job? = null
+
     fun getLinkList(userid: String, token: String){
-        viewModelScope.launch {
+        val job = viewModelScope.launch {
             try {
                 val linklist = UrlShortService.networkService.getLinkList(userid, token)
                 _respond.value = linklist
@@ -32,6 +35,7 @@ class PerformanceViewModel: ViewModel() {
                 Log.e("Get Link List Exep", e.message.toString())
             }
         }
+        runningJob = job
     }
 
     fun getData(link: String, dateStart: String, dateEnd: String, userid: String, accountType: String, token: String){
@@ -51,6 +55,10 @@ class PerformanceViewModel: ViewModel() {
 
     private fun resetData(){
         _data.value = null
+    }
+
+    fun cancelJob(){
+        runningJob?.cancel()
     }
 
 }

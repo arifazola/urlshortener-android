@@ -53,6 +53,7 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        Utils.showToast(requireContext(), "Created")
         binding = FragmentDashboardBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
         sharedPreferences =
@@ -110,6 +111,7 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
 //        chart.data = barDataSet
 //        chart.setFitBars(true)
 
+        viewModel.respond.removeObservers(viewLifecycleOwner)
         viewModel.respond.observe(viewLifecycleOwner) {
             it?.let {
                 binding.clShimmerParent.visibility = View.GONE
@@ -169,7 +171,7 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
                         binding.animationView5.visibility = View.GONE
                         binding.animationView6.visibility = View.GONE
                     }
-                } else {
+                } else if(it.data != null) {
                     binding.clAlertTop.visibility = View.GONE
                     binding.clSliders.visibility = View.VISIBLE
                     binding.chart.visibility = View.VISIBLE
@@ -409,19 +411,24 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
                     subsGrowthChart.data = LineData(subsGrowthSet)
                     subsGrowthChart.animateXY(100, 500)
                     Log.i("Dashboard Data", citySet.toString())
-                }
 
-                val dataSliders = arrayListOf<String>(
-                    it.data!!.get(0).totalLink!!,
-                    it.data!!.get(0).totalLib!!,
-                    it.data!!.get(0).totalSubs!!
-                )
-                val adapter = SlidersAdapter(dataSliders)
-                adapter.onClickMoreInfo = this
-                binding.viewPager.adapter = adapter
+                    val dataSliders = arrayListOf<String>(
+                        it.data!!.get(0).totalLink!!,
+                        it.data!!.get(0).totalLib!!,
+                        it.data!!.get(0).totalSubs!!
+                    )
+                    val adapter = SlidersAdapter(dataSliders)
+                    adapter.onClickMoreInfo = this
+                    binding.viewPager.adapter = adapter
+                }
             }
         }
     }
+
+//    override fun onStop() {
+//        super.onStop()
+//        viewModel.cancelJob()
+//    }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
         val pieEntry = e as PieEntry

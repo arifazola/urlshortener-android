@@ -9,8 +9,8 @@ import retrofit2.create
 import retrofit2.http.*
 import java.util.concurrent.TimeUnit
 
-//private val URL = "https://shrlnk.my.id"
-private val URL = "http://192.168.1.7:8080/"
+private val URL = "https://shrlnk.my.id"
+//private val URL = "http://192.168.1.7:8080/"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -53,7 +53,7 @@ interface NetworkService{
     suspend fun getTopTen(@Query("userid") userid: String, @Query("token")token: String): Respond
 
     @GET("api/linkinbio/data")
-    suspend fun getLib(@Query("user_id") userid: String, @Query("token") token: String) : Respond
+    suspend fun getLib(@Query("user_id") userid: String, @Query("token") token: String, @Query("page") page: Int) : Respond
 
     @GET("api/linkinbio/setting")
     suspend fun getLibSettings(@Query("property") property: String, @Query("user_id") userid: String, @Query("token") token: String): Respond

@@ -62,11 +62,13 @@ class TopLinkFragment : Fragment(), OnLinkSelected {
         binding.rvLinks.adapter = adapter
 
         viewModel.respond.observe(viewLifecycleOwner){
-            binding.shimmer.visibility = View.GONE
-            binding.rvLinks.visibility = View.VISIBLE
-            Utils.sharedPreferenceString(sharedPreferences, "token", it!!.token.toString())
-            Log.i("Data Link Top", it.toString())
-            adapter.data = it.data!!
+            it?.let {
+                binding.shimmer.visibility = View.GONE
+                binding.rvLinks.visibility = View.VISIBLE
+                Utils.sharedPreferenceString(sharedPreferences, "token", it!!.token.toString())
+                Log.i("Data Link Top", it.toString())
+                adapter.data = it.data!!
+            }
         }
         return binding.root
     }
@@ -80,5 +82,10 @@ class TopLinkFragment : Fragment(), OnLinkSelected {
         urlhit: String
     ) {
         findNavController().navigate(LinksFragmentDirections.actionLinksFragmentToLinkDetailFragment(date, title, orgurl, urlShort, urlhit, urlid))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.cancelJob()
     }
 }

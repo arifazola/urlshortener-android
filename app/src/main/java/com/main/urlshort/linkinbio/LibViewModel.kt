@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.main.urlshort.network.Respond
 import com.main.urlshort.network.UrlShortService
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class LibViewModel: ViewModel() {
@@ -39,20 +40,43 @@ class LibViewModel: ViewModel() {
     val loadingAnim: LiveData<Boolean>
         get() = _loadingAnim
 
+    private val _error = MutableLiveData<Boolean>()
+    val error: LiveData<Boolean>
+        get() = _error
 
-    fun getLibData(userid: String, token: String){
-        viewModelScope.launch {
+    private val _isCancelled = MutableLiveData<Boolean>()
+    val isCancelled: LiveData<Boolean>
+        get() = _isCancelled
+
+    var runningJob: Job? = null
+
+
+    fun getLibData(userid: String, token: String, page: Int){
+        val job = viewModelScope.launch {
             _loadingData.value = true
             try {
-                val libData = UrlShortService.networkService.getLib(userid, token)
+                val libData = UrlShortService.networkService.getLib(userid, token, page)
                 _respond.value = libData
                 _loadingData.value = false
+                _error.value = false
+                _isCancelled.value = false
             }catch (e: Exception){
                 Log.e("LibData Exception", e.message.toString())
                 _loadingData.value = false
+                if(e.message.toString() == "StandaloneCoroutine was cancelled"){
+                    _error.value = false
+                    _isCancelled.value = true
+                } else {
+                    _error.value = true
+                    _isCancelled.value = false
+                }
             }
         }
+
+        resetValue()
+        runningJob = job
     }
+
 
     fun getLibSettings(property: String, userid: String, token: String){
         viewModelScope.launch {
@@ -106,6 +130,11 @@ class LibViewModel: ViewModel() {
             }
         }
         resetDelete()
+    }
+
+    fun cancelJob(){
+        runningJob?.cancel()
+//        _errors.value = listOf(null, true)
     }
 
     private fun resetValue(){
