@@ -306,12 +306,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             binding.fabSeePreview.visibility = View.VISIBLE
             isInLink = false
 //            Utils.removeSharedPreferences(sharedPreferences, "from_detail")
-        }  else if(destination.id == R.id.linksFragment){
+        }  else if(destination.id == R.id.linksFragment) {
             supportActionBar?.setDisplayShowCustomEnabled(false)
             binding.fabAddLink.visibility = View.VISIBLE
             binding.fabSeePreview.visibility = View.GONE
             isInLink = true
 //            Utils.sharedPreferenceString(sharedPreferences, "in_link", "1")
+        }else if(destination.id == R.id.QRFragment){
+            supportActionBar?.setDisplayShowCustomEnabled(false)
+            binding.fabAddLink.visibility = View.GONE
+            binding.fabSeePreview.visibility = View.GONE
+            isInLink = false
         }else {
             supportActionBar?.setDisplayShowCustomEnabled(false)
             binding.fabAddLink.visibility = View.VISIBLE

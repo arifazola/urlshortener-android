@@ -163,7 +163,8 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         title: String,
         orgurl: String,
         urlShort: String,
-        urlhit: String
+        urlhit: String,
+        qr: String
     ) {
 //        findNavController().navigate(AllLinkFragmentDirections.actionAllLinkFragmentToLinkDetailFragment2(date, title, orgurl, urlShort, urlhit))
 //        viewModel.respond.removeObservers(viewLifecycleOwner)
@@ -177,7 +178,8 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
                 orgurl,
                 urlShort,
                 urlhit,
-                urlid
+                urlid,
+                qr
             )
         )
     }

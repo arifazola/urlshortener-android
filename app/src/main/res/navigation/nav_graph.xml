@@ -52,6 +52,12 @@
             app:destination="@id/linksFragment"
             app:popUpTo="@id/linksFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="qr"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_linkDetailFragment_to_QRFragment"
+            app:destination="@id/QRFragment" />
     </fragment>
     <fragment
         android:id="@+id/allLinkFragment"
@@ -93,5 +99,9 @@
     <fragment
         android:id="@+id/QRFragment"
         android:name="com.main.urlshort.qr.QRFragment"
-        android:label="QRFragment" />
+        android:label="QRFragment" >
+        <argument
+            android:name="qr"
+            app:argType="string" />
+    </fragment>
 </navigation>

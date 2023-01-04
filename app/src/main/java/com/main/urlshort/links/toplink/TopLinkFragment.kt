@@ -79,9 +79,10 @@ class TopLinkFragment : Fragment(), OnLinkSelected {
         title: String,
         orgurl: String,
         urlShort: String,
-        urlhit: String
+        urlhit: String,
+        qr: String
     ) {
-        findNavController().navigate(LinksFragmentDirections.actionLinksFragmentToLinkDetailFragment(date, title, orgurl, urlShort, urlhit, urlid))
+        findNavController().navigate(LinksFragmentDirections.actionLinksFragmentToLinkDetailFragment(date, title, orgurl, urlShort, urlhit, urlid, qr))
     }
 
     override fun onStop() {

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -180,6 +181,8 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
         binding.btnAddLib.visibility = View.GONE
         binding.shimmer.visibility = View.GONE
         binding.rvLib.visibility = View.GONE
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         binding.loadinganim.visibility = View.VISIBLE
         binding.tvLoading.visibility = View.VISIBLE
     }
@@ -187,6 +190,8 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
     private fun hideLoading(){
         binding.btnAddLib.visibility = View.VISIBLE
         binding.shimmer.visibility = View.VISIBLE
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(true)
         binding.rvLib.visibility = View.GONE
         binding.loadinganim.visibility = View.GONE
         binding.tvLoading.visibility = View.GONE

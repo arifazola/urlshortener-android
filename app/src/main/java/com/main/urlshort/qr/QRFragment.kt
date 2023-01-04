@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -58,34 +59,71 @@ class QRFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentQRBinding.inflate(inflater)
+        val args = QRFragmentArgs.fromBundle(requireArguments())
         val qr = binding.imgQR
 
-        Glide.with(requireContext()).load("https://shrlnk.my.id/images/ghn.svg")
-            .into(qr)
+        if(args.qr == ""){
+            showLoading()
+            createQr()
+        } else{
+            hideLoading()
+            Glide.with(requireContext()).load("https://shrlnk.my.id/images/"+args.qr+".jpg")
+                .into(qr)
 
 
 
-        binding.btnShare.setOnClickListener {
-            Glide.with(requireContext()).asBitmap().load("https://shrlnk.my.id/images/ghn.svg")
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(
-                        resource: Bitmap,
-                        transition: Transition<in Bitmap>?
-                    ) {
-                        val intent = Intent(Intent.ACTION_SEND)
-                        intent.setType("image/*")
-                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        intent.putExtra(Intent.EXTRA_STREAM, getLocalBitmapUri(resource))
-                        startActivity(Intent.createChooser(intent, "Share With"))
-                    }
+            binding.btnShare.setOnClickListener {
+                Glide.with(requireContext()).asBitmap().load("https://shrlnk.my.id/images/"+args.qr+".jpg")
+                    .into(object : CustomTarget<Bitmap>() {
+                        override fun onResourceReady(
+                            resource: Bitmap,
+                            transition: Transition<in Bitmap>?
+                        ) {
+                            val intent = Intent(Intent.ACTION_SEND)
+                            intent.setType("image/*")
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            intent.putExtra(Intent.EXTRA_STREAM, getLocalBitmapUri(resource))
+                            startActivity(Intent.createChooser(intent, "Share With"))
+                        }
 
-                    override fun onLoadCleared(placeholder: Drawable?) {
+                        override fun onLoadCleared(placeholder: Drawable?) {
 
-                    }
+                        }
 
-                })
+                    })
+            }
         }
         return binding.root
+    }
+
+    private fun createQr(){
+
+    }
+
+    private fun showLoading(){
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
+        binding.loadinganim.visibility = View.VISIBLE
+        binding.tvLoading.visibility = View.VISIBLE
+        binding.imgQR.visibility = View.GONE
+        binding.tvDestination.visibility = View.GONE
+        binding.tvDestinationVal.visibility = View.GONE
+        binding.tvShort.visibility = View.GONE
+        binding.tvShortVal.visibility = View.GONE
+        binding.btnShare.visibility = View.GONE
+    }
+
+    private fun hideLoading(){
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(true)
+        binding.loadinganim.visibility = View.GONE
+        binding.tvLoading.visibility = View.GONE
+        binding.imgQR.visibility = View.VISIBLE
+        binding.tvDestination.visibility = View.VISIBLE
+        binding.tvDestinationVal.visibility = View.VISIBLE
+        binding.tvShort.visibility = View.VISIBLE
+        binding.tvShortVal.visibility = View.VISIBLE
+        binding.btnShare.visibility = View.VISIBLE
     }
 
     private fun getLocalBitmapUri(bitmap: Bitmap): Uri? {

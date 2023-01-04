@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
@@ -33,6 +34,7 @@ import com.main.urlshort.R
 import com.main.urlshort.SHARED_PREF_KEY
 import com.main.urlshort.Utils
 import com.main.urlshort.databinding.FragmentLinkDetailBinding
+import com.squareup.moshi.internal.Util
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
@@ -53,6 +55,7 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
     private lateinit var customActionBar: View
     private lateinit var binding: FragmentLinkDetailBinding
     private lateinit var viewModel: LinkDetailViewModel
+    private lateinit var clCustomBar: ConstraintLayout
     private lateinit var edit: ImageView
     private lateinit var save: ImageView
     private lateinit var qr: ImageView
@@ -79,8 +82,10 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
         token = sharedPreferences.getString("token", null).toString()
 //        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fabAddLink)
         val args = LinkDetailFragmentArgs.fromBundle(requireArguments())
+        Utils.showToast(requireContext(), args.qr)
         defaultUrlShort = args.urlshort
         customActionBar = (requireActivity() as AppCompatActivity).supportActionBar?.customView!!
+        clCustomBar = customActionBar.findViewById(R.id.clCustomBar)
         edit = customActionBar.findViewById(R.id.imgEdit)
         save = customActionBar.findViewById(R.id.imgSave)
         qr = customActionBar.findViewById(R.id.imgQR)
@@ -95,9 +100,15 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
             if (it == true){
                 showLoading()
                 save.visibility = View.GONE
+                customActionBar.visibility = View.GONE
+                (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
             } else if(it == false){
                 hideLoading()
                 save.visibility = View.VISIBLE
+                customActionBar.visibility = View.VISIBLE
+                (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(true)
             }
         }
 
@@ -110,7 +121,7 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
         }
 
         qr.setOnClickListener {
-            findNavController().navigate(R.id.QRFragment)
+            findNavController().navigate(LinkDetailFragmentDirections.actionLinkDetailFragmentToQRFragment(args.qr))
         }
 
         if(args.urlhit.toInt() != 0){
@@ -193,6 +204,10 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
         constraintSet.applyTo(constraint)
         val accountType = sharedPreferences.getString("accountType", null)
         if (accountType == "free") binding.etBackHalf.isEnabled = false else binding.etBackHalf.isEnabled = true
+        val constraintSetCustom = ConstraintSet()
+        constraintSetCustom.clone(clCustomBar)
+        constraintSetCustom.connect(qr.id, ConstraintSet.END, save.id, ConstraintSet.START)
+        constraintSetCustom.applyTo(clCustomBar)
         edit.visibility = View.GONE
         save.visibility = View.VISIBLE
         binding.materialButton2.visibility = View.GONE

@@ -42,7 +42,7 @@ class TopTenAdapter: RecyclerView.Adapter<TopTenAdapter.ViewHolder>() {
         holder.tvUrlHit.text = item.urlHit
 
         holder.clLink.setOnClickListener {
-            onLinkSelected?.setOnLinkSelected(item.urlID.toString(), item.createdDate.toString(), item.title.toString(), item.orgUrl.toString(), item.urlShort.toString(), item.urlHit.toString())
+            onLinkSelected?.setOnLinkSelected(item.urlID.toString(), item.createdDate.toString(), item.title.toString(), item.orgUrl.toString(), item.urlShort.toString(), item.urlHit.toString(), item.qrCode.toString())
         }
     }
 
