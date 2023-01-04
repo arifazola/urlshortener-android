@@ -42,7 +42,8 @@ data class DataContent(
      @Json(name = "total_link") val totalLink: String?,
      @Json(name = "total_lib") val totalLib: String?,
      @Json(name = "total_subs") val totalSubs: String?,
-     @Json(name = "links_list") val linkList: List<LinksList>?
+     @Json(name = "links_list") val linkList: List<LinksList>?,
+     @Json(name = "create_qr") val createQr: String?
 )
 
 data class ErrorMsg(

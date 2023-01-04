@@ -121,7 +121,7 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
         }
 
         qr.setOnClickListener {
-            findNavController().navigate(LinkDetailFragmentDirections.actionLinkDetailFragmentToQRFragment(args.qr))
+            findNavController().navigate(LinkDetailFragmentDirections.actionLinkDetailFragmentToQRFragment(args.qr, args.urlid, args.urlshort))
         }
 
         if(args.urlhit.toInt() != 0){

@@ -103,5 +103,9 @@
         <argument
             android:name="qr"
             app:argType="string" />
+        <argument
+            android:name="urlid"
+            app:argType="string" />
+        <argument android:name="urlshort" />
     </fragment>
 </navigation>

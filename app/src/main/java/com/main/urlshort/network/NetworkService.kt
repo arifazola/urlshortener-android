@@ -86,6 +86,10 @@ interface NetworkService{
 
     @GET("api/performance/getdata")
     suspend fun getData(@Query("links") links: String, @Query("date_start") dateStart: String, @Query("date_end") dateEnd: String, @Query("user_id") userid: String, @Query("account_type") accountType: String, @Query("token") token: String): Respond
+
+    @FormUrlEncoded
+    @POST("api/links/createqr")
+    suspend fun createQr(@Field("user_id") userid: String, @Field("url_id") urlid: String, @Field("url_short") urlshort: String, @Field("token") token: String): Respond
 }
 
 object UrlShortService{
