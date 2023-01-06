@@ -91,6 +91,9 @@
             app:destination="@id/libListFragment"
             app:popUpTo="@id/libListFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_libListFragment_to_QRFragment"
+            app:destination="@id/QRFragment" />
     </fragment>
     <fragment
         android:id="@+id/performanceFragment"
@@ -106,6 +109,8 @@
         <argument
             android:name="urlid"
             app:argType="string" />
-        <argument android:name="urlshort" />
+        <argument
+            android:name="urlshort"
+            app:argType="string"/>
     </fragment>
 </navigation>

@@ -43,10 +43,10 @@ class LibAdapter: RecyclerView.Adapter<LibAdapter.ViewHolder>() {
         val item = data[position]
         holder.libName.text = item.urlShort
         holder.clList.setOnClickListener {
-            onEditLibListener?.onEditLibListener(item.urlShort.toString())
+            onEditLibListener?.onEditLibListener(item.urlShort)
         }
         holder.clList.setOnLongClickListener {
-            onLongClickEditLibListener?.onLongClickEditLibListener(item.urlShort.toString())
+            onLongClickEditLibListener?.onLongClickEditLibListener(item.urlShort, item.urlid, item.qr)
             return@setOnLongClickListener true
         }
     }
@@ -96,5 +96,5 @@ interface SetOnEditLibListener{
 }
 
 interface SetOnLongClickEditLibListener{
-    fun onLongClickEditLibListener(property: String)
+    fun onLongClickEditLibListener(property: String, qr: String, urlid: String)
 }

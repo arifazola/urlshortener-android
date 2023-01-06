@@ -22,6 +22,7 @@
     <string-array name="lib_option">
         <item>Edit</item>
         <item>Share</item>
+        <item>QR Code</item>
         <item>Delete</item>
     </string-array>
 

@@ -126,5 +126,7 @@ data class CurrentLink(
 )
 
 data class CurrentLib(
-    val urlShort: String
+    val urlShort: String,
+    val urlid: String,
+    val qr: String
 )
