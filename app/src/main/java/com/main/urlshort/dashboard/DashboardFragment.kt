@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
@@ -60,16 +59,6 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
             requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val userid = sharedPreferences.getString("userid", null)
 
-//        val dataSliders = arrayListOf<String>("10", "20", "30", "40")
-//        val adapter = SlidersAdapter(dataSliders)
-//        binding.viewPager.adapter = adapter
-
-//        viewModel.getdata(userid!!)
-//
-//        viewModel.respond.observe(viewLifecycleOwner){
-//            Log.i("Dashboard Data", it.toString())
-//        }
-
         binding.clAlertTop.visibility = View.GONE
         binding.clSliders.visibility = View.GONE
         binding.clMostVisitedLink.visibility = View.GONE
@@ -82,10 +71,11 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
 
         setMostVisitedLinkChart(userid!!)
 
-//        binding.svParent.setOnScrollChangeListener { view, i, i2, i3, i4 ->
-//            Log.i("Scroll Info", binding.svParent.scrollX.toString())
-//            Log.i("Scroll Info", binding.svParent.scrollY.toString())
-//        }
+        viewModel.error.observe(viewLifecycleOwner){
+            if (it == true){
+                Utils.showToast(requireContext(), "Internal server error. Please try again")
+            }
+        }
         return binding.root
     }
 
@@ -93,23 +83,6 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
         val accountType = sharedPreferences.getString("accountType", null)
         val token = sharedPreferences.getString("token", null)
         viewModel.getdata(userid, accountType.toString(), token.toString())
-//        link.add("Lah")
-//        link.add("Lah")
-//        link.add("Lah")
-//        link.add("Lah")
-//
-//        val kasus = ArrayList<BarEntry>()
-//        kasus.add(BarEntry(0F, 18F))
-//        kasus.add(BarEntry(1F, 157F))
-//        kasus.add(BarEntry(2F, 1F))
-//        kasus.add(BarEntry(3F, 4F))
-//        kasus.add(BarEntry(4F, 3F))
-//
-//
-//        val kasusBarDataSet = BarDataSet(kasus, "Kasus")
-//        val barDataSet = BarData(kasusBarDataSet)
-//        chart.data = barDataSet
-//        chart.setFitBars(true)
 
         viewModel.respond.removeObservers(viewLifecycleOwner)
         viewModel.respond.observe(viewLifecycleOwner) {
@@ -123,8 +96,6 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
                 binding.clCity.visibility = View.VISIBLE
                 binding.clSubsGrowth.visibility = View.VISIBLE
                 binding.clReferer.visibility = View.VISIBLE
-
-                Log.e("Dashboard Data", it.toString())
                 Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
                 if (it.error != null) {
                     if (it.error!!.get(0).limitDashboard != null) {
@@ -364,12 +335,8 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
                                 random.nextInt(256)
                             )
                             colorSet.add(newColor)
-                            Log.i("Apakah Iterate", i.toString())
                         }
-                        Log.i("Apakah Masuk", colorSet.get(5).toString())
                     }
-//                refererSet.xValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
-//                refererSet.yValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
                     refererSet.setColors(colorSet)
                     refererSet.valueFormatter = DefaultValueFormatter(0)
                     val refererData = PieData(refererSet)
@@ -410,7 +377,6 @@ class DashboardFragment : Fragment(), OnChartValueSelectedListener, OnClickMoreI
                     subsGrowthChart.xAxis.labelRotationAngle = 20f
                     subsGrowthChart.data = LineData(subsGrowthSet)
                     subsGrowthChart.animateXY(100, 500)
-                    Log.i("Dashboard Data", citySet.toString())
 
                     val dataSliders = arrayListOf<String>(
                         it.data!!.get(0).totalLink!!,

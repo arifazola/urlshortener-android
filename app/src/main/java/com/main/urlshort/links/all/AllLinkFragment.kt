@@ -53,7 +53,6 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        Log.i("Fragment Create", "All Link")
         var page = 1
         links = mutableListOf()
         binding = FragmentAllLinkBinding.inflate(inflater)
@@ -92,15 +91,6 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
             }
         }
 
-//        viewModel.errors.observe(viewLifecycleOwner){
-//            if(it.get(0) == true && it.get(1) == null){
-//                Utils.showToast(requireContext(), "Internal Server Error. Please Try Again")
-//                binding.shimmer.visibility = View.GONE
-//            } else if(it.get(1) == true){
-//                Log.i("Job Cancelled", "Job Cancelled")
-//            }
-//        }
-
         viewModel.loading.removeObservers(viewLifecycleOwner)
         viewModel.loading.observe(viewLifecycleOwner) {
             loadingAdapter.isLoading = it
@@ -113,13 +103,10 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
                     if (it == false) {
                         if (links.size != totalLink) {
                             viewModel.getData(userid.toString(), token.toString(), page)
-                            Log.e("Loading Stats", "Calling Data")
-                            Log.i("Current Page", "Page")
                         }
                     }
                 }
             }
-            Log.e("Loading Stats", it.toString())
         }
 
         viewModel.respond.removeObservers(viewLifecycleOwner)
@@ -146,7 +133,7 @@ class AllLinkFragment : Fragment(), OnLinkSelected {
                         )
                     }
                     totalLink = it.data.get(0).totalLink!!.toInt()
-                    binding.tvTotalLinks.text = totalLink.toString()
+                    binding.tvTotalLinks.text = "${totalLink} Links"
                     linkAdapter.notifyDataSetChanged()
                     page++
                 }

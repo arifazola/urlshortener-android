@@ -16,6 +16,10 @@ class DashboardViewModel: ViewModel() {
     val respond: LiveData<Respond?>
     get() = _respond
 
+    private val _error = MutableLiveData<Boolean?>()
+    val error: LiveData<Boolean?>
+    get() = _error
+
     private var job: Job? = null
 
     fun getdata(userid: String, accountType: String, token: String){
@@ -23,8 +27,10 @@ class DashboardViewModel: ViewModel() {
             try {
                 val data = UrlShortService.networkService.getdatadashboard(userid, accountType, token)
                 _respond.value = data
+                _error.value = false
             }catch (e: Exception){
                 Log.e("Dashboard exception", e.message.toString())
+                _error.value = true
             }
         }
         resetValue()

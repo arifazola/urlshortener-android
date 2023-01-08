@@ -140,7 +140,6 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
                     adapter.notifyDataSetChanged()
                     page++
                 }
-                Log.i("Lib Data", it.data.toString())
             }
         }
 
@@ -149,33 +148,16 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
         }
 
         viewModel.delete.observe(viewLifecycleOwner) {
-            Log.i("Lib Data Sisa", it.toString())
             Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
             token = it?.token.toString()
-//            viewModel.getLibData(userid, "taikucing")
             if (it?.data?.get(0)?.msg != null) {
                 findNavController().navigate(LibListFragmentDirections.actionLibListFragmentSelf())
-//                viewModel.getLibData(userid, token, 1)
-//                viewModel.respond.observe(viewLifecycleOwner){
-//                    adapter.data = it!!.data!!
-//                    Log.i("Lib Data After Delete", it.toString())
-//                }
-//                adapter.notifyDataSetChanged()
-
-
-//                val respond = viewModel.respond.value
-//                adapter.data = respond?.data!!
-//                adapter.notifyDataSetChanged()
-//                Utils.showToast(requireContext(), "This Delete Runs")
             }
 
             if (it?.error?.get(0)?.errorMsg != null) {
                 Utils.showToast(requireContext(), it.error.get(0).errorMsg.toString())
-                Log.e("Delete Lib", it.error.get(0).errorMsg.toString())
             }
         }
-
-        Log.i("Recreate", "Recreate")
         return binding.root
     }
 

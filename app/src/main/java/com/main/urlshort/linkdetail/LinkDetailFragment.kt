@@ -190,9 +190,6 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
                 findNavController().navigate(LinkDetailFragmentDirections.actionLinkDetailFragmentToLinksFragment2())
                 Utils.showToast(requireContext(), "Link deleted")
             }
-
-
-            Log.i("Data Link Detele", it.toString())
         }
     }
 
@@ -259,8 +256,6 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
             if(it?.data?.get(0)?.msg == "Duplicate"){
                 binding.etBackHalf.error = "Back-half is already taken. Try another one"
             }
-
-            Log.e("Data Link Edit", it.toString())
         }
     }
 

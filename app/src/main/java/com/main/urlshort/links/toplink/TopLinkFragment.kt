@@ -3,7 +3,6 @@ package com.main.urlshort.links.toplink
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -50,7 +49,6 @@ class TopLinkFragment : Fragment(), OnLinkSelected {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        Log.i("Fragment Create", "Top Link")
         binding = FragmentTopLinkBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(TopLinkViewModel::class.java)
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
@@ -60,13 +58,13 @@ class TopLinkFragment : Fragment(), OnLinkSelected {
         val adapter = TopTenAdapter()
         adapter.onLinkSelected = this
         binding.rvLinks.adapter = adapter
+        binding.tvTotalLinks.text = "10 Links"
 
         viewModel.respond.observe(viewLifecycleOwner){
             it?.let {
                 binding.shimmer.visibility = View.GONE
                 binding.rvLinks.visibility = View.VISIBLE
                 Utils.sharedPreferenceString(sharedPreferences, "token", it!!.token.toString())
-                Log.i("Data Link Top", it.toString())
                 adapter.data = it.data!!
             }
         }

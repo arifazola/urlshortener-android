@@ -193,7 +193,6 @@ class LibEditFragment : Fragment(), ColorObserver{
         viewModel.getLibSettings(args.property, userid.toString(), token)
 
         viewModel.setting.observe(viewLifecycleOwner){
-            Log.i("LibSettings Data", it.toString())
 
             Utils.sharedPreferenceString(sharedPreferences, "token", it.token.toString())
             token = it.token.toString()
@@ -214,11 +213,9 @@ class LibEditFragment : Fragment(), ColorObserver{
             }
 
             it.data?.get(0)?.links?.forEach {
-                Log.i("Links List", "${it.link} ${it.libProperty} ${it.text}")
                 createLinkForm(it.link, it.text)
                 val links = arrayListOf(it.link.toString(), it.text.toString())
                 listLink.put(initialConstraint, links)
-//                Log.i("Map Links", listLink.toString())
             }
 
             it.data?.get(0)?.picture.let {
@@ -255,28 +252,12 @@ class LibEditFragment : Fragment(), ColorObserver{
             }
         }
 
-//        Log.i("Map Links", listLink.toString())
-
         val seePreview = requireActivity().findViewById<ExtendedFloatingActionButton>(R.id.fabSeePreview)
 
         seePreview.setOnClickListener {
             val intent = Intent(requireContext(), PreviewLibActivity::class.java)
             intent.putExtra("PROPERTY", args.property)
             startActivity(intent)
-//            findNavController().navigate(LibEditFragmentDirections.actionLibEditFragmentToPreviewLibFragmnet())
-//            links = mutableListOf()
-//            linkText = mutableListOf()
-//            for(i in 0 .. listLink.size - 1){
-//                links.add(i, listLink.values.elementAt(i).get(0))
-//                linkText.add(i, listLink.values.elementAt(i).get(1))
-//            }
-//            Log.i("Map Links", links.toString())
-//            Log.i("Map Links", linkText.toString())
-//            Log.i("Map Links", listLink.toString())
-//            Log.i("Map Links", listLink.toString())
-//            Log.i("Map Links Size", listLink.get(1)?.size.toString())
-//            Log.i("Map Links Size", listLink.get(20)?.size.toString())
-//            viewModel.editlib(userid!!, links, linkText, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor)
         }
 
         val customSave = (requireActivity() as AppCompatActivity).supportActionBar?.customView
@@ -292,7 +273,6 @@ class LibEditFragment : Fragment(), ColorObserver{
             viewModel.editlib(userid.toString(), links, linkText, property, backgroundType, firstColor, secondaryColor, picture, pageTitle, bio, buttonColor, textColor, token)
 
             viewModel.respond.observe(viewLifecycleOwner){
-                Log.i("Edit Lib Respons", it.toString())
 
                 Utils.sharedPreferenceString(sharedPreferences, "token", it?.token.toString())
                 token = it?.token.toString()
@@ -528,23 +508,8 @@ class LibEditFragment : Fragment(), ColorObserver{
             val selectedCard = cardView.id
             val card = view?.findViewById<CardView>(selectedCard)
             card?.visibility = View.GONE
-            Log.i("Map Links", listLink.toString())
         }
 
         initialConstraint = cardView.id
     }
-
-
-    /**
-     * Potongan kode untuk tambah entry ke map dan hapus berdasarkan key
-     * dipake buat ngapus list link
-     * keynya bisa id button delete atau id cardview
-     * valunya link sama text
-     *
-     *  val list = listOf(1,2,3)
-        val list2 = listOf(4,5,6)
-        val map = mutableMapOf(1 to list, 2 to list2)
-
-        print(map.remove(2))
-     */
 }

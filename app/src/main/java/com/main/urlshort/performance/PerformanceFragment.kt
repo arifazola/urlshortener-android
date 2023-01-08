@@ -193,9 +193,7 @@ class PerformanceFragment : Fragment(), AdapterView.OnItemClickListener,
                             random.nextInt(256)
                         )
                         colorSet.add(newColor)
-                        Log.i("Apakah Iterate", i.toString())
                     }
-                    Log.i("Apakah Masuk", colorSet.get(5).toString())
                 }
                 refererSet.setColors(colorSet)
                 refererSet.valueFormatter = DefaultValueFormatter(0)
