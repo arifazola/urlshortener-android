@@ -70,6 +70,8 @@ class QRFragment : Fragment() {
         sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE)
         val args = QRFragmentArgs.fromBundle(requireArguments())
         val qr = binding.imgQR
+        binding.tvDestinationVal.text = args.orgurl
+        binding.tvShortVal.text = "shrlnk.my.id/${args.urlshort}"
 
         viewModel.loading.observe(viewLifecycleOwner){
             if(it == true){

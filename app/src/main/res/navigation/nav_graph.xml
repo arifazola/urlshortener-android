@@ -102,7 +102,7 @@
     <fragment
         android:id="@+id/QRFragment"
         android:name="com.main.urlshort.qr.QRFragment"
-        android:label="QRFragment" >
+        android:label="QR Code">
         <argument
             android:name="qr"
             app:argType="string" />
@@ -111,6 +111,9 @@
             app:argType="string" />
         <argument
             android:name="urlshort"
-            app:argType="string"/>
+            app:argType="string" />
+        <argument
+            android:name="orgurl"
+            app:argType="string" />
     </fragment>
 </navigation>

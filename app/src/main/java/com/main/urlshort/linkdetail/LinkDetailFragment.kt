@@ -82,7 +82,6 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
         token = sharedPreferences.getString("token", null).toString()
 //        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fabAddLink)
         val args = LinkDetailFragmentArgs.fromBundle(requireArguments())
-        Utils.showToast(requireContext(), args.qr)
         defaultUrlShort = args.urlshort
         customActionBar = (requireActivity() as AppCompatActivity).supportActionBar?.customView!!
         clCustomBar = customActionBar.findViewById(R.id.clCustomBar)
@@ -121,7 +120,7 @@ class LinkDetailFragment : Fragment(), DialogDelete.DialogDeleteListener {
         }
 
         qr.setOnClickListener {
-            findNavController().navigate(LinkDetailFragmentDirections.actionLinkDetailFragmentToQRFragment(args.qr, args.urlid, args.urlshort))
+            findNavController().navigate(LinkDetailFragmentDirections.actionLinkDetailFragmentToQRFragment(args.qr, args.urlid, args.urlshort, args.orgurl))
         }
 
         if(args.urlhit.toInt() != 0){

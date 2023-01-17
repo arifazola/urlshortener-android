@@ -298,7 +298,7 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
     }
 
     override fun onLongClickEditLibListener(property: String, urlid: String, qr: String) {
-        val dialog = DialogLib(R.array.lib_option, userid, property, viewModel, adapter, token, urlid, qr)
+        val dialog = DialogLib(R.array.lib_option, userid, property, viewModel, adapter, token, urlid, qr, "shrlnk.my.id/${property}")
         dialog.listener = this
         dialog.show(requireFragmentManager(), "LIB Option")
     }
@@ -316,8 +316,8 @@ class LibListFragment : Fragment(), SetOnEditLibListener, SetOnLongClickEditLibL
 
     }
 
-    override fun onButtonTwoClicked(property: String, urlid: String, qr: String) {
-        findNavController().navigate(LibListFragmentDirections.actionLibListFragmentToQRFragment(qr, urlid, property))
+    override fun onButtonTwoClicked(property: String, urlid: String, qr: String, orgurl: String) {
+        findNavController().navigate(LibListFragmentDirections.actionLibListFragmentToQRFragment(qr, urlid, property,orgurl))
     }
 
     override fun onButtonThreeClicked(property: String) {
@@ -339,7 +339,8 @@ class DialogLib(
     val adapter: LibAdapter,
     val token: String,
     val urlid: String,
-    val qr: String
+    val qr: String,
+    val orgurl: String
 ) : DialogFragment() {
 
     lateinit var listener: DialogLibListener
@@ -347,7 +348,7 @@ class DialogLib(
     interface DialogLibListener {
         fun onButtonZeroClicked(property: String) // Edit
         fun onButtonOneClicked(property: String) // Share
-        fun onButtonTwoClicked(property: String, urlid: String, qr: String) // QR
+        fun onButtonTwoClicked(property: String, urlid: String, qr: String, orgurl: String) // QR
         fun onButtonThreeClicked(property: String) // Delete
     }
 
@@ -361,7 +362,7 @@ class DialogLib(
             } else if(i == 1){
                 listener.onButtonOneClicked(shortUrl)
             }else if (i == 2) {
-                listener.onButtonTwoClicked(shortUrl, urlid, qr)
+                listener.onButtonTwoClicked(shortUrl, urlid, qr, orgurl)
             } else {
                 listener.onButtonThreeClicked(shortUrl)
             }
